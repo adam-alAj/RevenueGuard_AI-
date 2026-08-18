@@ -1,0 +1,66 @@
+[project]
+name = "revenueguard-ai"
+version = "0.1.0"
+description = "AI Revenue Leakage Detection & Recovery Platform"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30,<1.0",
+    "sqlalchemy[asyncio]>=2.0,<3.0",
+    "asyncpg>=0.30,<1.0",
+    "alembic>=1.14,<2.0",
+    "pydantic>=2.10,<3.0",
+    "pydantic-settings>=2.7,<3.0",
+    "agent-framework>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0,<9.0",
+    "pytest-asyncio>=0.25,<1.0",
+    "httpx>=0.28,<1.0",
+    "ruff>=0.9,<1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = [".", ".."]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 99
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument (FastAPI Depends)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend"]

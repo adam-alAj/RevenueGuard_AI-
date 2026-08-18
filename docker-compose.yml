@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: revenueguard
+      POSTGRES_PASSWORD: revenueguard
+      POSTGRES_DB: revenueguard
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U revenueguard -d revenueguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: development
+      DEBUG: "true"
+      DATABASE_URL: postgresql+asyncpg://revenueguard:revenueguard@db:5432/revenueguard
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-not-for-production}
+      GEMINI_MODEL: gemini-2.0-flash
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+volumes:
+  pgdata:
