@@ -1,0 +1,8 @@
+customer_external_id,invoice_number,external_id,total,outstanding_balance,currency,status
+CUST-001,INV-001,INV-001,$1200.00,$0.00,USD,paid
+CUST-001,INV-002,INV-002,"$3,450.50","$3,450.50",USD,sent
+CUST-002,INV-003,INV-003,500.00,500.00,USD,draft
+CUST-999,INV-004,INV-004,$800.00,$800.00,USD,sent
+,INV-005,INV-005,$100.00,$100.00,USD,draft
+CUST-003,INV-006,INV-006,not-a-number,$50.00,USD,draft
+CUST-003,INV-007,INV-007,$200.00,$200.00,USD,sent
