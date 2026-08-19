@@ -121,9 +121,7 @@ def render_payment_reminder(
     Returns:
         Structured reminder draft dict.
     """
-    formatted_amount = FinancialImpactCalculator.format_currency(
-        potential_leakage, currency
-    )
+    formatted_amount = FinancialImpactCalculator.format_currency(potential_leakage, currency)
     reminder_text = (
         f"Dear {customer_name},\n\n"
         f"Our records indicate a billing discrepancy identified in case {case_number}. "
@@ -143,9 +141,7 @@ def render_payment_reminder(
             "name": customer_name,
         },
         "reminder": {
-            "subject": (
-                f"Payment Reminder — Billing Discrepancy {case_number}"
-            ),
+            "subject": (f"Payment Reminder — Billing Discrepancy {case_number}"),
             "body": reminder_text,
             "amount_due": str(potential_leakage),
             "currency": currency,
@@ -191,9 +187,7 @@ def render_internal_task(
     Returns:
         Structured internal task dict.
     """
-    formatted_amount = FinancialImpactCalculator.format_currency(
-        potential_leakage, currency
-    )
+    formatted_amount = FinancialImpactCalculator.format_currency(potential_leakage, currency)
 
     task_titles = {
         "request_internal_investigation": "Internal Investigation Required",

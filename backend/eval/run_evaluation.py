@@ -58,17 +58,19 @@ def _run_rules_offline(
         elapsed_ms = (time.perf_counter() - start) * 1000
 
         for finding in findings:
-            detected.append(DetectedCase(
-                leakage_type=finding.leakage_type,
-                description=finding.description,
-                potential_leakage=finding.potential_leakage,
-                customer_id=finding.customer_id,
-                contract_id=finding.contract_id,
-                invoice_id=finding.invoice_id,
-                project_id=finding.project_id,
-                correlation_id=str(uuid.uuid4()),
-                detection_time_ms=elapsed_ms / max(len(findings), 1),
-            ))
+            detected.append(
+                DetectedCase(
+                    leakage_type=finding.leakage_type,
+                    description=finding.description,
+                    potential_leakage=finding.potential_leakage,
+                    customer_id=finding.customer_id,
+                    contract_id=finding.contract_id,
+                    invoice_id=finding.invoice_id,
+                    project_id=finding.project_id,
+                    correlation_id=str(uuid.uuid4()),
+                    detection_time_ms=elapsed_ms / max(len(findings), 1),
+                )
+            )
             detection_times.append(elapsed_ms / max(len(findings), 1))
 
     return detected, detection_times

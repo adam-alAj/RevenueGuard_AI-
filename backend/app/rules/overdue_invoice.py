@@ -36,24 +36,27 @@ class OverdueInvoiceRule(BaseRule):
             effective_due = due_date
             if grace_days > 0:
                 from datetime import timedelta
+
                 effective_due = due_date + timedelta(days=grace_days)
 
             if ctx.today <= effective_due:
                 continue  # Not yet overdue
 
-            findings.append(LeakageFinding(
-                leakage_type=self.leakage_type,
-                description=(
-                    f"Invoice '{invoice.get('invoice_number', 'Unknown')}': "
-                    f"due {due_date.isoformat()}, "
-                    f"outstanding ${outstanding:.2f}"
-                ),
-                expected_amount=outstanding,
-                actual_amount=Decimal("0"),
-                potential_leakage=outstanding,
-                customer_id=invoice.get("customer_id"),
-                contract_id=invoice.get("contract_id"),
-                invoice_id=invoice["id"],
-            ))
+            findings.append(
+                LeakageFinding(
+                    leakage_type=self.leakage_type,
+                    description=(
+                        f"Invoice '{invoice.get('invoice_number', 'Unknown')}': "
+                        f"due {due_date.isoformat()}, "
+                        f"outstanding ${outstanding:.2f}"
+                    ),
+                    expected_amount=outstanding,
+                    actual_amount=Decimal("0"),
+                    potential_leakage=outstanding,
+                    customer_id=invoice.get("customer_id"),
+                    contract_id=invoice.get("contract_id"),
+                    invoice_id=invoice["id"],
+                )
+            )
 
         return findings

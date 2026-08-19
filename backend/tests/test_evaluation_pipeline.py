@@ -391,7 +391,9 @@ class TestCIGate:
         metrics_all = run_evaluation()
         # Find the most prolific rule type and disable it
         if metrics_all.per_rule:
-            top_rule = max(metrics_all.per_rule, key=lambda r: metrics_all.per_rule[r].get("detected", 0))
+            top_rule = max(
+                metrics_all.per_rule, key=lambda r: metrics_all.per_rule[r].get("detected", 0)
+            )
             metrics_disabled = run_evaluation_with_disabled_rules([top_rule])
 
             # Recall should drop when a rule is disabled

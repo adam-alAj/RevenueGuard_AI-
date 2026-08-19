@@ -52,17 +52,13 @@ class Invoice(UUIDMixin, TenantMixin, TimestampMixin, Base):
     subtotal: Mapped[float] = mapped_column(Numeric(14, 2), nullable=False, default=0)
     tax_amount: Mapped[float] = mapped_column(Numeric(14, 2), nullable=False, default=0)
     total: Mapped[float] = mapped_column(Numeric(14, 2), nullable=False, default=0)
-    outstanding_balance: Mapped[float] = mapped_column(
-        Numeric(14, 2), nullable=False, default=0
-    )
+    outstanding_balance: Mapped[float] = mapped_column(Numeric(14, 2), nullable=False, default=0)
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
 
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="draft")
 
     # Relationships
-    lines: Mapped[list[InvoiceLine]] = relationship(
-        back_populates="invoice", lazy="selectin"
-    )
+    lines: Mapped[list[InvoiceLine]] = relationship(back_populates="invoice", lazy="selectin")
 
 
 class InvoiceLine(UUIDMixin, TenantMixin, TimestampMixin, Base):

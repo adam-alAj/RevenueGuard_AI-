@@ -72,7 +72,9 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
 
     # ── Missing Invoice cases ────────────────────────────────────────────
     # Projects that are completed, billable, have a contract, and have no invoice
-    invoiced_project_ids = {inv.get("project_id") for inv in dataset.invoices if inv.get("project_id")}
+    invoiced_project_ids = {
+        inv.get("project_id") for inv in dataset.invoices if inv.get("project_id")
+    }
     for project in dataset.projects:
         if project["status"] != "completed":
             continue
@@ -90,16 +92,18 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
                 expected += Decimal(str(cl["quantity"])) * Decimal(str(cl["unit_price"]))
 
         if expected > 0:
-            true_positives.append(GroundTruthCase(
-                leakage_type="missing_invoice",
-                description=f"Missing invoice for project {project['name']}",
-                expected_amount=expected,
-                match_project_name=project["name"],
-                match_contract_name=next(
-                    (c["name"] for c in dataset.contracts if c["id"] == contract_id),
-                    None,
-                ),
-            ))
+            true_positives.append(
+                GroundTruthCase(
+                    leakage_type="missing_invoice",
+                    description=f"Missing invoice for project {project['name']}",
+                    expected_amount=expected,
+                    match_project_name=project["name"],
+                    match_contract_name=next(
+                        (c["name"] for c in dataset.contracts if c["id"] == contract_id),
+                        None,
+                    ),
+                )
+            )
 
     # ── Underbilling cases ──────────────────────────────────────────────
     # Contracts where invoiced amount is significantly less than contracted
@@ -127,12 +131,14 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
             continue
         diff = expected_val - actual_val
         if diff > Decimal("100") and diff / expected_val > Decimal("0.05"):
-            true_positives.append(GroundTruthCase(
-                leakage_type="underbilling",
-                description=f"Underbilling for {contract['name']}: expected {expected_val}, got {actual_val}",
-                expected_amount=diff,
-                match_contract_name=contract["name"],
-            ))
+            true_positives.append(
+                GroundTruthCase(
+                    leakage_type="underbilling",
+                    description=f"Underbilling for {contract['name']}: expected {expected_val}, got {actual_val}",
+                    expected_amount=diff,
+                    match_contract_name=contract["name"],
+                )
+            )
 
     # ── Overdue Invoice cases ───────────────────────────────────────────
     for inv in dataset.invoices:
@@ -141,12 +147,14 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
         if outstanding <= 0 or due is None:
             continue
         if due < dataset.today:
-            true_positives.append(GroundTruthCase(
-                leakage_type="overdue_invoice",
-                description=f"Overdue invoice {inv['invoice_number']}: outstanding {outstanding}",
-                expected_amount=outstanding,
-                match_invoice_number=inv["invoice_number"],
-            ))
+            true_positives.append(
+                GroundTruthCase(
+                    leakage_type="overdue_invoice",
+                    description=f"Overdue invoice {inv['invoice_number']}: outstanding {outstanding}",
+                    expected_amount=outstanding,
+                    match_invoice_number=inv["invoice_number"],
+                )
+            )
 
     # ── Partial Payment cases ───────────────────────────────────────────
     # Invoices with outstanding balance and no credit notes explaining the gap
@@ -163,12 +171,14 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
         cn_total = sum(Decimal(str(cn["amount"])) for cn in cn_by_inv.get(inv_id, []))
         if cn_total < outstanding:
             gap = outstanding - cn_total
-            true_positives.append(GroundTruthCase(
-                leakage_type="partial_payment",
-                description=f"Partial payment gap for {inv['invoice_number']}: {gap}",
-                expected_amount=gap,
-                match_invoice_number=inv["invoice_number"],
-            ))
+            true_positives.append(
+                GroundTruthCase(
+                    leakage_type="partial_payment",
+                    description=f"Partial payment gap for {inv['invoice_number']}: {gap}",
+                    expected_amount=gap,
+                    match_invoice_number=inv["invoice_number"],
+                )
+            )
 
     # ── Contract Expiration cases ────────────────────────────────────────
     renewal_map: dict[str, bool] = {}
@@ -203,19 +213,18 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
             if cl["contract_id"] == contract_id:
                 expected += Decimal(str(cl["quantity"])) * Decimal(str(cl["unit_price"]))
 
-        has_inv = any(
-            inv.get("project_id") == project["id"]
-            for inv in dataset.invoices
-        )
+        has_inv = any(inv.get("project_id") == project["id"] for inv in dataset.invoices)
         leakage = expected if not has_inv else expected - expected  # 0 if invoiced
         if leakage > 0:
-            true_positives.append(GroundTruthCase(
-                leakage_type="contract_expiration",
-                description=f"Contract expired for {contract['name']}, service {project['name']}",
-                expected_amount=leakage,
-                match_project_name=project["name"],
-                match_contract_name=contract["name"],
-            ))
+            true_positives.append(
+                GroundTruthCase(
+                    leakage_type="contract_expiration",
+                    description=f"Contract expired for {contract['name']}, service {project['name']}",
+                    expected_amount=leakage,
+                    match_project_name=project["name"],
+                    match_contract_name=contract["name"],
+                )
+            )
 
     # ── False Positive Bait ─────────────────────────────────────────────
     # Clean records with near-miss features that should NOT trigger detections
@@ -224,35 +233,41 @@ def build_ground_truth(dataset: GeneratedDataset) -> GroundTruth:
     for contract in dataset.contracts:
         cid = str(contract["id"])
         if renewal_map.get(cid):
-            false_positives_bait.append(GroundTruthCase(
-                leakage_type="contract_expiration",
-                description=f"Contract {contract['name']} has renewal — should not flag",
-                expected_amount=Decimal("0"),
-                match_contract_name=contract["name"],
-                should_detect=False,
-            ))
+            false_positives_bait.append(
+                GroundTruthCase(
+                    leakage_type="contract_expiration",
+                    description=f"Contract {contract['name']} has renewal — should not flag",
+                    expected_amount=Decimal("0"),
+                    match_contract_name=contract["name"],
+                    should_detect=False,
+                )
+            )
 
     # 2. Fully paid invoices — should not flag
     for inv in dataset.invoices:
         if Decimal(str(inv.get("outstanding_balance", 0))) <= 0:
-            false_positives_bait.append(GroundTruthCase(
-                leakage_type="partial_payment",
-                description=f"Invoice {inv['invoice_number']} fully paid — should not flag",
-                expected_amount=Decimal("0"),
-                match_invoice_number=inv["invoice_number"],
-                should_detect=False,
-            ))
+            false_positives_bait.append(
+                GroundTruthCase(
+                    leakage_type="partial_payment",
+                    description=f"Invoice {inv['invoice_number']} fully paid — should not flag",
+                    expected_amount=Decimal("0"),
+                    match_invoice_number=inv["invoice_number"],
+                    should_detect=False,
+                )
+            )
 
     # 3. Active projects (not completed) — should not flag missing invoice
     for project in dataset.projects:
         if project["status"] != "completed":
-            false_positives_bait.append(GroundTruthCase(
-                leakage_type="missing_invoice",
-                description=f"Active project {project['name']} — should not flag",
-                expected_amount=Decimal("0"),
-                match_project_name=project["name"],
-                should_detect=False,
-            ))
+            false_positives_bait.append(
+                GroundTruthCase(
+                    leakage_type="missing_invoice",
+                    description=f"Active project {project['name']} — should not flag",
+                    expected_amount=Decimal("0"),
+                    match_project_name=project["name"],
+                    should_detect=False,
+                )
+            )
 
     return GroundTruth(
         true_positives=true_positives,

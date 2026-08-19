@@ -84,17 +84,27 @@ def _generate_customers(count: int) -> list[dict[str, Any]]:
     """Generate customers with deterministic data."""
     customers = []
     industries = [
-        "Technology", "Finance", "Healthcare", "Manufacturing",
-        "Retail", "Energy", "Consulting", "Legal", "Media", "Education",
+        "Technology",
+        "Finance",
+        "Healthcare",
+        "Manufacturing",
+        "Retail",
+        "Energy",
+        "Consulting",
+        "Legal",
+        "Media",
+        "Education",
     ]
     for i in range(count):
-        customers.append({
-            "id": _make_id("cust", i),
-            "name": f"Eval Customer {i:04d}",
-            "external_id": f"EVAL-CUST-{i:04d}",
-            "organization_id": EVAL_ORG_ID,
-            "industry": industries[i % len(industries)],
-        })
+        customers.append(
+            {
+                "id": _make_id("cust", i),
+                "name": f"Eval Customer {i:04d}",
+                "external_id": f"EVAL-CUST-{i:04d}",
+                "organization_id": EVAL_ORG_ID,
+                "industry": industries[i % len(industries)],
+            }
+        )
     return customers
 
 
@@ -130,27 +140,33 @@ def _generate_contracts(
             line_total = Decimal(str(qty)) * unit_price
             total_value += line_total
 
-            contract_lines.append({
-                "id": _make_id("cline", i * 10 + j),
-                "contract_id": cid,
-                "description": f"Line item {j + 1}",
-                "quantity": qty,
-                "unit_price": unit_price,
-                "total": line_total,
-            })
+            contract_lines.append(
+                {
+                    "id": _make_id("cline", i * 10 + j),
+                    "contract_id": cid,
+                    "description": f"Line item {j + 1}",
+                    "quantity": qty,
+                    "unit_price": unit_price,
+                    "total": line_total,
+                }
+            )
 
-        contracts.append({
-            "id": cid,
-            "name": f"Contract {i:04d} - {customer['name']}",
-            "customer_id": customer["id"],
-            "organization_id": EVAL_ORG_ID,
-            "start_date": start,
-            "end_date": end,
-            "expiration_date": expiration,
-            "total_value": total_value,
-            "billing_frequency": billing_freq,
-            "parent_contract_id": _make_id("contract", i - 1) if has_renewal and i > 0 else None,
-        })
+        contracts.append(
+            {
+                "id": cid,
+                "name": f"Contract {i:04d} - {customer['name']}",
+                "customer_id": customer["id"],
+                "organization_id": EVAL_ORG_ID,
+                "start_date": start,
+                "end_date": end,
+                "expiration_date": expiration,
+                "total_value": total_value,
+                "billing_frequency": billing_freq,
+                "parent_contract_id": _make_id("contract", i - 1)
+                if has_renewal and i > 0
+                else None,
+            }
+        )
 
     return contracts, contract_lines
 
@@ -170,16 +186,18 @@ def _generate_projects(
 
         end = date(2025, 6, 1) + timedelta(days=(i * 5) % 60)
 
-        projects.append({
-            "id": _make_id("project", i),
-            "name": f"Project {i:04d}",
-            "status": "completed" if is_completed else "active",
-            "customer_id": customer["id"],
-            "contract_id": contract["id"],
-            "is_billable": is_billable,
-            "start_date": end - timedelta(days=90),
-            "end_date": end,
-        })
+        projects.append(
+            {
+                "id": _make_id("project", i),
+                "name": f"Project {i:04d}",
+                "status": "completed" if is_completed else "active",
+                "customer_id": customer["id"],
+                "contract_id": contract["id"],
+                "is_billable": is_billable,
+                "start_date": end - timedelta(days=90),
+                "end_date": end,
+            }
+        )
     return projects
 
 
@@ -213,28 +231,32 @@ def _generate_invoices(
         due = date(2025, 6, 1) + timedelta(days=(i * 3) % 60)
         issued = due - timedelta(days=30)
 
-        invoices.append({
-            "id": inv_id,
-            "invoice_number": f"INV-EVAL-{i:05d}",
-            "customer_id": customer["id"],
-            "contract_id": contract["id"],
-            "project_id": project["id"],
-            "organization_id": EVAL_ORG_ID,
-            "total": total,
-            "outstanding_balance": outstanding,
-            "due_date": due,
-            "issued_date": issued,
-        })
+        invoices.append(
+            {
+                "id": inv_id,
+                "invoice_number": f"INV-EVAL-{i:05d}",
+                "customer_id": customer["id"],
+                "contract_id": contract["id"],
+                "project_id": project["id"],
+                "organization_id": EVAL_ORG_ID,
+                "total": total,
+                "outstanding_balance": outstanding,
+                "due_date": due,
+                "issued_date": issued,
+            }
+        )
 
         # Add invoice line items
-        invoice_lines.append({
-            "id": _make_id("iline", i),
-            "invoice_id": inv_id,
-            "description": f"Invoice line for {i:05d}",
-            "quantity": 1,
-            "unit_price": total,
-            "total": total,
-        })
+        invoice_lines.append(
+            {
+                "id": _make_id("iline", i),
+                "invoice_id": inv_id,
+                "description": f"Invoice line for {i:05d}",
+                "quantity": 1,
+                "unit_price": total,
+                "total": total,
+            }
+        )
 
     return invoices, invoice_lines
 
@@ -255,14 +277,16 @@ def _generate_payments(
         inv_total = Decimal(str(invoice["total"]))
         amount = inv_total * Decimal("0.5") if is_partial else inv_total
 
-        payments.append({
-            "id": _make_id("pay", i),
-            "customer_id": customer["id"],
-            "invoice_id": invoice["id"],
-            "amount": amount,
-            "payment_date": invoice.get("due_date", date(2025, 7, 1)),
-            "organization_id": EVAL_ORG_ID,
-        })
+        payments.append(
+            {
+                "id": _make_id("pay", i),
+                "customer_id": customer["id"],
+                "invoice_id": invoice["id"],
+                "amount": amount,
+                "payment_date": invoice.get("due_date", date(2025, 7, 1)),
+                "organization_id": EVAL_ORG_ID,
+            }
+        )
     return payments
 
 
@@ -275,11 +299,13 @@ def _generate_credit_notes(
     for i in range(count):
         invoice = invoices[i % len(invoices)]
         inv_total = Decimal(str(invoice["total"]))
-        credit_notes.append({
-            "id": _make_id("cn", i),
-            "invoice_id": invoice["id"],
-            "amount": inv_total * Decimal("0.1"),  # 10% credit
-            "customer_id": invoice["customer_id"],
-            "organization_id": EVAL_ORG_ID,
-        })
+        credit_notes.append(
+            {
+                "id": _make_id("cn", i),
+                "invoice_id": invoice["id"],
+                "amount": inv_total * Decimal("0.1"),  # 10% credit
+                "customer_id": invoice["customer_id"],
+                "organization_id": EVAL_ORG_ID,
+            }
+        )
     return credit_notes

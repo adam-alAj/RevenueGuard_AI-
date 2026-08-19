@@ -49,20 +49,34 @@ from app.models.rule import Rule
 # Enum tests
 # ---------------------------------------------------------------------------
 
+
 class TestLeakageTypeEnum:
     def test_has_21_values(self) -> None:
         assert len(LeakageType) == 21
 
     def test_all_expected_values_present(self) -> None:
         expected = {
-            "missing_invoice", "underbilling", "pricing_mismatch",
-            "quantity_mismatch", "discount_leakage", "contract_expiration",
-            "subscription_renewal", "late_billing", "uncollected_invoice",
+            "missing_invoice",
+            "underbilling",
+            "pricing_mismatch",
+            "quantity_mismatch",
+            "discount_leakage",
+            "contract_expiration",
+            "subscription_renewal",
+            "late_billing",
+            "uncollected_invoice",
             "overdue_invoice",
-            "partial_payment", "reconciliation_failure", "incorrect_credit_note",
-            "contract_invoice_conflict", "duplicate_discount",
-            "recurring_billing_failure", "usage_billing", "minimum_commitment",
-            "sla_credit", "refund_anomaly", "other",
+            "partial_payment",
+            "reconciliation_failure",
+            "incorrect_credit_note",
+            "contract_invoice_conflict",
+            "duplicate_discount",
+            "recurring_billing_failure",
+            "usage_billing",
+            "minimum_commitment",
+            "sla_credit",
+            "refund_anomaly",
+            "other",
         }
         actual = {e.value for e in LeakageType}
         assert actual == expected
@@ -86,9 +100,18 @@ class TestCaseStatusEnum:
 
     def test_values(self) -> None:
         expected = {
-            "detected", "investigating", "pending_review", "approved",
-            "rejected", "action_pending", "action_completed", "verified",
-            "recovered", "false_positive", "legitimate_exception", "closed",
+            "detected",
+            "investigating",
+            "pending_review",
+            "approved",
+            "rejected",
+            "action_pending",
+            "action_completed",
+            "verified",
+            "recovered",
+            "false_positive",
+            "legitimate_exception",
+            "closed",
         }
         assert {e.value for e in CaseStatus} == expected
 
@@ -114,17 +137,37 @@ class TestApprovalDecisionEnum:
 
 # Tables that should exist
 EXPECTED_TABLES = {
-    "organizations", "users", "roles", "permissions", "role_permissions",
-    "customers", "customer_contacts",
-    "contracts", "contract_lines",
-    "projects", "products", "services",
-    "invoices", "invoice_lines",
-    "payments", "payment_allocations", "subscriptions", "credit_notes",
-    "revenue_leakage_cases", "evidence", "investigations",
-    "agent_executions", "tool_executions",
-    "recovery_actions", "recovery_results", "approvals",
-    "rules", "rule_versions",
-    "integrations", "data_sources", "import_jobs",
+    "organizations",
+    "users",
+    "roles",
+    "permissions",
+    "role_permissions",
+    "customers",
+    "customer_contacts",
+    "contracts",
+    "contract_lines",
+    "projects",
+    "products",
+    "services",
+    "invoices",
+    "invoice_lines",
+    "payments",
+    "payment_allocations",
+    "subscriptions",
+    "credit_notes",
+    "revenue_leakage_cases",
+    "evidence",
+    "investigations",
+    "agent_executions",
+    "tool_executions",
+    "recovery_actions",
+    "recovery_results",
+    "approvals",
+    "rules",
+    "rule_versions",
+    "integrations",
+    "data_sources",
+    "import_jobs",
     "audit_logs",
 }
 
@@ -138,17 +181,34 @@ class TestAllTablesExist:
 
 # Tables that MUST have organization_id (tenant-owned)
 TENANT_TABLES = {
-    "users", "roles",
-    "customers", "customer_contacts",
-    "contracts", "contract_lines",
-    "projects", "products", "services",
-    "invoices", "invoice_lines",
-    "payments", "payment_allocations", "subscriptions", "credit_notes",
-    "revenue_leakage_cases", "evidence", "investigations",
-    "agent_executions", "tool_executions",
-    "recovery_actions", "recovery_results", "approvals",
-    "rules", "rule_versions",
-    "integrations", "data_sources", "import_jobs",
+    "users",
+    "roles",
+    "customers",
+    "customer_contacts",
+    "contracts",
+    "contract_lines",
+    "projects",
+    "products",
+    "services",
+    "invoices",
+    "invoice_lines",
+    "payments",
+    "payment_allocations",
+    "subscriptions",
+    "credit_notes",
+    "revenue_leakage_cases",
+    "evidence",
+    "investigations",
+    "agent_executions",
+    "tool_executions",
+    "recovery_actions",
+    "recovery_results",
+    "approvals",
+    "rules",
+    "rule_versions",
+    "integrations",
+    "data_sources",
+    "import_jobs",
     "audit_logs",
 }
 
@@ -175,7 +235,10 @@ MONEY_TABLES = {
     "subscriptions": ["unit_price"],
     "credit_notes": ["amount"],
     "revenue_leakage_cases": [
-        "expected_amount", "actual_amount", "potential_leakage", "recoverable_amount",
+        "expected_amount",
+        "actual_amount",
+        "potential_leakage",
+        "recoverable_amount",
     ],
     "recovery_results": ["recovered_amount"],
 }
@@ -188,15 +251,12 @@ class TestMonetaryColumns:
                 table = Base.metadata.tables[table_name]
                 model_col = getattr(table.c, col_name)
                 assert isinstance(model_col.type, Numeric), (
-                    f"{table_name}.{col_name} should be NUMERIC(14,2), "
-                    f"got {type(model_col.type)}"
+                    f"{table_name}.{col_name} should be NUMERIC(14,2), got {type(model_col.type)}"
                 )
                 assert model_col.type.precision == 14, (
                     f"{table_name}.{col_name} precision should be 14"
                 )
-                assert model_col.type.scale == 2, (
-                    f"{table_name}.{col_name} scale should be 2"
-                )
+                assert model_col.type.scale == 2, f"{table_name}.{col_name} scale should be 2"
 
 
 # Confidence/ratio columns use NUMERIC(4,3)
@@ -214,8 +274,7 @@ class TestConfidenceColumns:
                 table = Base.metadata.tables[table_name]
                 model_col = getattr(table.c, col_name)
                 assert isinstance(model_col.type, Numeric), (
-                    f"{table_name}.{col_name} should be NUMERIC(4,3), "
-                    f"got {type(model_col.type)}"
+                    f"{table_name}.{col_name} should be NUMERIC(4,3), got {type(model_col.type)}"
                 )
                 assert model_col.type.precision == 4
                 assert model_col.type.scale == 3
@@ -224,6 +283,7 @@ class TestConfidenceColumns:
 # ---------------------------------------------------------------------------
 # Relationship tests
 # ---------------------------------------------------------------------------
+
 
 class TestRelationships:
     def test_contract_does_not_cascade_delete_invoices(self) -> None:
@@ -255,10 +315,7 @@ class TestRelationships:
         assert "agent_name" in columns
 
     def test_tool_execution_references_agent_execution(self) -> None:
-        fk_cols = {
-            c.name for c in ToolExecution.__table__.columns
-            if c.foreign_keys
-        }
+        fk_cols = {c.name for c in ToolExecution.__table__.columns if c.foreign_keys}
         assert "agent_execution_id" in fk_cols
 
     def test_all_tables_have_pk(self) -> None:
@@ -274,6 +331,7 @@ class TestRelationships:
 # Python instantiation. Tests check that models CAN be created, not
 # that defaults are applied.
 # ---------------------------------------------------------------------------
+
 
 class TestModelInstantiation:
     """Verify that every model can be instantiated with valid data."""
@@ -302,6 +360,7 @@ class TestModelInstantiation:
 
     def test_contract(self) -> None:
         from datetime import date
+
         contract = Contract(
             organization_id=self._make_uuid(),
             customer_id=self._make_uuid(),

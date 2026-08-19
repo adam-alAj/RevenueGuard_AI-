@@ -27,9 +27,7 @@ class RevenueLeakageCase(UUIDMixin, TenantMixin, TimestampMixin, Base):
         index=True,
     )
     case_number: Mapped[str] = mapped_column(String(20), nullable=False)
-    leakage_type: Mapped[LeakageType] = mapped_column(
-        String(50), nullable=False
-    )
+    leakage_type: Mapped[LeakageType] = mapped_column(String(50), nullable=False)
     status: Mapped[CaseStatus] = mapped_column(
         String(50), nullable=False, default=CaseStatus.detected.value
     )
@@ -64,15 +62,11 @@ class RevenueLeakageCase(UUIDMixin, TenantMixin, TimestampMixin, Base):
     rule_version_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("rule_versions.id"), nullable=True, index=True
     )
-    correlation_id: Mapped[str | None] = mapped_column(
-        String(100), nullable=True, index=True
-    )
+    correlation_id: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
     assigned_to: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), nullable=True, index=True
     )
-    snoozed_until: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), nullable=True
-    )
+    snoozed_until: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
 
 
 class Evidence(UUIDMixin, TenantMixin, TimestampMixin, Base):

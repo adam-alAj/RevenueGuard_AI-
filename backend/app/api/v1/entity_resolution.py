@@ -29,6 +29,7 @@ router = APIRouter(prefix="/entity-resolution", tags=["entity-resolution"])
 
 # --- Response Models ---
 
+
 class CandidateResponse(BaseModel):
     id: uuid.UUID
     source_entity_type: str
@@ -55,6 +56,7 @@ class ReviewRequest(BaseModel):
 
 
 # --- Endpoints ---
+
 
 @router.get(
     "/pending",

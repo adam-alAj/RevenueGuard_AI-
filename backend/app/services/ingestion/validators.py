@@ -50,7 +50,9 @@ def _require_date(value: Any, field_name: str, errors: list[str]) -> str | None:
         return None
     parsed = parse_date(value)
     if parsed is None:
-        errors.append(f"{field_name} must be a valid date (YYYY-MM-DD or MM/DD/YYYY), got '{value}'")
+        errors.append(
+            f"{field_name} must be a valid date (YYYY-MM-DD or MM/DD/YYYY), got '{value}'"
+        )
         return None
     return parsed
 
@@ -70,6 +72,7 @@ def _require_integer(value: Any, field_name: str, errors: list[str]) -> int | No
 # ---------------------------------------------------------------------------
 # Entity validators
 # ---------------------------------------------------------------------------
+
 
 def validate_customer(row: dict[str, Any]) -> tuple[bool, dict[str, Any] | list[str]]:
     """Validate a Customer row. Requires: name."""

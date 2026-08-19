@@ -33,9 +33,7 @@ class Customer(UUIDMixin, TenantMixin, TimestampMixin, Base):
     contacts: Mapped[list[CustomerContact]] = relationship(
         back_populates="customer", lazy="selectin"
     )
-    contracts: Mapped[list] = relationship(
-        "Contract", back_populates="customer", lazy="selectin"
-    )
+    contracts: Mapped[list] = relationship("Contract", back_populates="customer", lazy="selectin")
 
 
 class CustomerContact(UUIDMixin, TenantMixin, TimestampMixin, Base):

@@ -114,10 +114,7 @@ class ConfidenceScorer:
         """Ensure weights sum to 1.0 (within floating-point tolerance)."""
         total = sum(self.weights.values())
         if abs(total - 1.0) > 0.001:
-            raise ValueError(
-                f"Weights must sum to 1.0, got {total:.4f}. "
-                f"Weights: {self.weights}"
-            )
+            raise ValueError(f"Weights must sum to 1.0, got {total:.4f}. Weights: {self.weights}")
 
     def score(self, inputs: ConfidenceInput) -> ConfidenceBreakdown:
         """Compute the confidence score deterministically.
@@ -135,7 +132,8 @@ class ConfidenceScorer:
 
         # Get classification contribution (fixed mapping, NOT agent's confidence)
         classification_contrib = CLASSIFICATION_CONTRIBUTION.get(
-            inputs.classification, 0.40  # default to uncertain level
+            inputs.classification,
+            0.40,  # default to uncertain level
         )
 
         # Weighted average
@@ -171,9 +169,7 @@ class ConfidenceScorer:
         }
         for name, value in fields.items():
             if not (0.0 <= value <= 1.0):
-                raise ValueError(
-                    f"{name} must be between 0.0 and 1.0, got {value}"
-                )
+                raise ValueError(f"{name} must be between 0.0 and 1.0, got {value}")
         if inputs.classification not in CLASSIFICATION_CONTRIBUTION:
             raise ValueError(
                 f"Unknown classification: {inputs.classification}. "

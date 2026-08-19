@@ -61,11 +61,11 @@ class ContractTerms(BaseModel):
     All fields are strict — no optional free-text where a decision matters.
     """
 
-    billing_frequency: Literal["monthly", "quarterly", "semi_annual", "annual", "one_time", "usage_based"] = (
-        Field(description="How often the customer is billed")
-    )
-    unit_pricing_model: Literal["fixed", "tiered", "volume", "usage_based", "flat_rate"] = (
-        Field(description="Pricing model used in the contract")
+    billing_frequency: Literal[
+        "monthly", "quarterly", "semi_annual", "annual", "one_time", "usage_based"
+    ] = Field(description="How often the customer is billed")
+    unit_pricing_model: Literal["fixed", "tiered", "volume", "usage_based", "flat_rate"] = Field(
+        description="Pricing model used in the contract"
     )
     base_rate: float = Field(description="Base rate or unit price in the contract currency")
     currency: str = Field(description="ISO 4217 currency code", default="USD")
@@ -75,8 +75,8 @@ class ContractTerms(BaseModel):
         ge=0,
         le=100,
     )
-    renewal_terms: Literal["auto_renew", "manual_renew", "non_renewing", "unknown"] = (
-        Field(description="How the contract renews")
+    renewal_terms: Literal["auto_renew", "manual_renew", "non_renewing", "unknown"] = Field(
+        description="How the contract renews"
     )
     minimum_commitment: float | None = Field(
         description="Minimum spend or quantity commitment, if any",
@@ -165,12 +165,8 @@ class RecoveryRecommendation(BaseModel):
     The model cannot invent new action types.
     """
 
-    action: RecoveryActionType = Field(
-        description="Recommended recovery action"
-    )
-    urgency: UrgencyLevel = Field(
-        description="How urgently this action should be taken"
-    )
+    action: RecoveryActionType = Field(description="Recommended recovery action")
+    urgency: UrgencyLevel = Field(description="How urgently this action should be taken")
     rationale: str = Field(
         description="Why this specific action is recommended, citing evidence",
         max_length=1000,

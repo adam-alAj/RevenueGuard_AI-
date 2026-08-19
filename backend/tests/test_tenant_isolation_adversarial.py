@@ -65,12 +65,10 @@ class TestCustomerStoreIsolation:
 
         # Filter by Org A — should only see Org A's data
         org_a_customers = [
-            c for c in _customer_store.values()
-            if c["organization_id"] == str(ORG_A)
+            c for c in _customer_store.values() if c["organization_id"] == str(ORG_A)
         ]
         org_b_customers = [
-            c for c in _customer_store.values()
-            if c["organization_id"] == str(ORG_B)
+            c for c in _customer_store.values() if c["organization_id"] == str(ORG_B)
         ]
 
         assert len(org_a_customers) == 1
@@ -83,6 +81,7 @@ class TestCustomerStoreIsolation:
     def test_customer_id_guessing_returns_empty(self) -> None:
         """Knowing Org B's customer ID doesn't grant access from Org A."""
         from app.api.v1.customers import _customer_store
+
         _customer_store.clear()
         _customer_store["cust-a1"] = {
             "id": "cust-a1",
@@ -109,10 +108,12 @@ class TestLeakageStoreIsolation:
 
     def setup_method(self) -> None:
         from app.api.v1.leakage_inbox import set_leakage_store
+
         set_leakage_store({})
 
     def teardown_method(self) -> None:
         from app.api.v1.leakage_inbox import set_leakage_store
+
         set_leakage_store({})
 
     def test_org_a_cannot_see_org_b_cases(self) -> None:
@@ -169,6 +170,7 @@ class TestSearchIsolation:
         from app.api.v1.customers import _customer_store
         from app.api.v1.invoices import _invoice_store
         from app.api.v1.leakage_inbox import set_leakage_store
+
         _customer_store.clear()
         _contract_store.clear()
         _invoice_store.clear()
@@ -194,7 +196,8 @@ class TestSearchIsolation:
         # Search for "acme" from Org A — should only find Org A's customer
         query = "acme"
         org_a_results = [
-            c for c in _customer_store.values()
+            c
+            for c in _customer_store.values()
             if c["organization_id"] == str(ORG_A) and query in c["name"].lower()
         ]
         assert len(org_a_results) == 1
@@ -362,6 +365,7 @@ class TestSecretExposure:
         )
         # Decode without verification to inspect payload
         import jwt as pyjwt
+
         payload = pyjwt.decode(token, options={"verify_signature": False})
         assert "secret" not in str(payload).lower()
         assert "jwt_secret" not in str(payload).lower()
@@ -404,12 +408,14 @@ class TestInputValidation:
         # The search uses in-memory filtering, not raw SQL
         # But let's verify the filter doesn't crash on special characters
         from app.api.v1.leakage_inbox import _leakage_store, set_leakage_store
+
         set_leakage_store({})
 
         # Attempt SQL injection via search parameter
         malicious_query = "'; DROP TABLE customers; --"
         results = [
-            c for c in _leakage_store.values()
+            c
+            for c in _leakage_store.values()
             if malicious_query.lower() in c.get("description", "").lower()
             or malicious_query.lower() in c.get("case_number", "").lower()
         ]
@@ -466,7 +472,10 @@ class TestRateLimiting:
         # Fourth request should be blocked
         with pytest.raises(HTTPException) as exc_info:
             limiter.check(key)
-        assert "429" in str(exc_info.value.status_code) or "rate limit" in str(exc_info.value.detail).lower()
+        assert (
+            "429" in str(exc_info.value.status_code)
+            or "rate limit" in str(exc_info.value.detail).lower()
+        )
 
     def test_rate_limiter_allows_after_window(self) -> None:
         """Rate limiter resets after the time window."""
@@ -484,5 +493,6 @@ class TestRateLimiting:
 
         # After waiting, should be allowed again
         import time
+
         time.sleep(1.1)
         limiter.check(key)  # Should not raise

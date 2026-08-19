@@ -46,6 +46,7 @@ def _make_ctx(**overrides) -> RuleContext:
 # Rule 1: Missing Invoice
 # ---------------------------------------------------------------------------
 
+
 class TestMissingInvoiceRule:
     def test_completed_project_no_invoice_detected(self) -> None:
         """PROJECT_3 is completed, has no invoice → detected."""
@@ -90,10 +91,16 @@ class TestMissingInvoiceRule:
     def test_within_billing_window_not_detected(self) -> None:
         """Project completed recently, within billing window → not detected."""
         # Create a project completed 5 days ago with an invoice
-        project = {"id": uuid.uuid4(), "name": "Recent", "status": "completed",
-                   "customer_id": CUSTOMER_A, "contract_id": CONTRACT_A,
-                   "is_billable": True, "end_date": date(2026, 6, 10),
-                   "start_date": date(2026, 1, 1)}
+        project = {
+            "id": uuid.uuid4(),
+            "name": "Recent",
+            "status": "completed",
+            "customer_id": CUSTOMER_A,
+            "contract_id": CONTRACT_A,
+            "is_billable": True,
+            "end_date": date(2026, 6, 10),
+            "start_date": date(2026, 1, 1),
+        }
         rule = MissingInvoiceRule()
         ctx = _make_ctx(
             today=date(2026, 6, 15),  # 5 days after project end
@@ -116,6 +123,7 @@ class TestMissingInvoiceRule:
 # ---------------------------------------------------------------------------
 # Rule 2: Underbilling
 # ---------------------------------------------------------------------------
+
 
 class TestUnderbillingRule:
     def test_underbilling_detected(self) -> None:
@@ -152,7 +160,8 @@ class TestUnderbillingRule:
         invoice_lines = [il for il in INVOICE_LINES if il["invoice_id"] in (INVOICE_1, INVOICE_2)]
         # With threshold of $5,000 — $2,000 difference is below → not detected
         ctx = _make_ctx(
-            invoices=invoices, invoice_lines=invoice_lines,
+            invoices=invoices,
+            invoice_lines=invoice_lines,
             parameters={"amount_threshold": 5000, "percentage_threshold": 5.0},
         )
         findings = rule.evaluate(ctx)
@@ -176,6 +185,7 @@ class TestUnderbillingRule:
 # ---------------------------------------------------------------------------
 # Rule 3: Pricing Mismatch
 # ---------------------------------------------------------------------------
+
 
 class TestPricingMismatchRule:
     def test_pricing_mismatch_detected(self) -> None:
@@ -203,6 +213,7 @@ class TestPricingMismatchRule:
 # ---------------------------------------------------------------------------
 # Rule 4: Overdue Invoice
 # ---------------------------------------------------------------------------
+
 
 class TestOverdueInvoiceRule:
     def test_overdue_detected(self) -> None:
@@ -256,6 +267,7 @@ class TestOverdueInvoiceRule:
 # Rule 5: Partial Payment
 # ---------------------------------------------------------------------------
 
+
 class TestPartialPaymentRule:
     def test_overdue_with_no_payment_detected(self) -> None:
         """INVOICE_3: $3,000 total, no payments for Customer A covering this → gap."""
@@ -279,6 +291,7 @@ class TestPartialPaymentRule:
 # ---------------------------------------------------------------------------
 # Rule 6: Contract Expiration
 # ---------------------------------------------------------------------------
+
 
 class TestContractExpirationRule:
     def test_expired_contract_no_renewal_detected(self) -> None:
@@ -313,6 +326,7 @@ class TestContractExpirationRule:
 # Composite engine test
 # ---------------------------------------------------------------------------
 
+
 class TestRuleEngineComposite:
     def test_all_rules_produce_correct_total(self) -> None:
         """Running all rules produces the expected findings count."""
@@ -339,31 +353,71 @@ class TestRuleEngineComposite:
         project = uuid.uuid4()
         invoice = uuid.uuid4()
 
-        projects = [{"id": project, "name": "Test", "status": "completed",
-                      "customer_id": customer, "contract_id": contract,
-                      "is_billable": True, "end_date": date(2025, 12, 1),
-                      "start_date": date(2025, 6, 1)}]
-        contracts_list = [{"id": contract, "name": "Test Contract",
-                           "customer_id": customer,
-                           "start_date": date(2025, 1, 1),
-                           "end_date": date(2026, 12, 31),
-                           "expiration_date": date(2026, 12, 31),
-                           "total_value": Decimal("5000"),
-                           "billing_frequency": "project"}]
-        contract_lines = [{"id": uuid.uuid4(), "contract_id": contract,
-                           "description": "Work", "quantity": 100,
-                           "unit_price": Decimal("50"), "total": Decimal("5000")}]
-        invoices = [{"id": invoice, "invoice_number": "INV-TEST",
-                      "customer_id": customer, "contract_id": contract,
-                      "project_id": project, "total": Decimal("5000"),
-                      "outstanding_balance": Decimal("0"),
-                      "due_date": date(2026, 1, 15),
-                      "issued_date": date(2025, 12, 15)}]
-        invoice_lines = [{"id": uuid.uuid4(), "invoice_id": invoice,
-                           "description": "Work", "quantity": 100,
-                           "unit_price": Decimal("50"), "total": Decimal("5000")}]
-        payments = [{"id": uuid.uuid4(), "customer_id": customer,
-                      "amount": Decimal("5000"), "payment_date": date(2026, 1, 10)}]
+        projects = [
+            {
+                "id": project,
+                "name": "Test",
+                "status": "completed",
+                "customer_id": customer,
+                "contract_id": contract,
+                "is_billable": True,
+                "end_date": date(2025, 12, 1),
+                "start_date": date(2025, 6, 1),
+            }
+        ]
+        contracts_list = [
+            {
+                "id": contract,
+                "name": "Test Contract",
+                "customer_id": customer,
+                "start_date": date(2025, 1, 1),
+                "end_date": date(2026, 12, 31),
+                "expiration_date": date(2026, 12, 31),
+                "total_value": Decimal("5000"),
+                "billing_frequency": "project",
+            }
+        ]
+        contract_lines = [
+            {
+                "id": uuid.uuid4(),
+                "contract_id": contract,
+                "description": "Work",
+                "quantity": 100,
+                "unit_price": Decimal("50"),
+                "total": Decimal("5000"),
+            }
+        ]
+        invoices = [
+            {
+                "id": invoice,
+                "invoice_number": "INV-TEST",
+                "customer_id": customer,
+                "contract_id": contract,
+                "project_id": project,
+                "total": Decimal("5000"),
+                "outstanding_balance": Decimal("0"),
+                "due_date": date(2026, 1, 15),
+                "issued_date": date(2025, 12, 15),
+            }
+        ]
+        invoice_lines = [
+            {
+                "id": uuid.uuid4(),
+                "invoice_id": invoice,
+                "description": "Work",
+                "quantity": 100,
+                "unit_price": Decimal("50"),
+                "total": Decimal("5000"),
+            }
+        ]
+        payments = [
+            {
+                "id": uuid.uuid4(),
+                "customer_id": customer,
+                "amount": Decimal("5000"),
+                "payment_date": date(2026, 1, 10),
+            }
+        ]
 
         ctx = RuleContext(
             organization_id=uuid.uuid4(),
@@ -396,7 +450,8 @@ class TestRuleEngineComposite:
 
         # With low threshold: $2,000 difference → detected
         ctx_low = _make_ctx(
-            invoices=invoices, invoice_lines=invoice_lines,
+            invoices=invoices,
+            invoice_lines=invoice_lines,
             parameters={"amount_threshold": 100, "percentage_threshold": 5.0},
         )
         findings_low = rule.evaluate(ctx_low)
@@ -404,7 +459,8 @@ class TestRuleEngineComposite:
 
         # With high threshold: $2,000 difference below $5,000 → NOT detected
         ctx_high = _make_ctx(
-            invoices=invoices, invoice_lines=invoice_lines,
+            invoices=invoices,
+            invoice_lines=invoice_lines,
             parameters={"amount_threshold": 5000, "percentage_threshold": 5.0},
         )
         findings_high = rule.evaluate(ctx_high)
@@ -428,13 +484,20 @@ class TestRuleEngineComposite:
 # Rule map sanity
 # ---------------------------------------------------------------------------
 
+
 class TestRuleMap:
     def test_all_6_rules_registered(self) -> None:
         assert len(RULE_MAP) == 6
 
     def test_leakage_types(self) -> None:
-        expected = {"missing_invoice", "underbilling", "pricing_mismatch",
-                     "overdue_invoice", "partial_payment", "contract_expiration"}
+        expected = {
+            "missing_invoice",
+            "underbilling",
+            "pricing_mismatch",
+            "overdue_invoice",
+            "partial_payment",
+            "contract_expiration",
+        }
         assert set(RULE_MAP.keys()) == expected
 
     def test_all_rules_have_defaults(self) -> None:

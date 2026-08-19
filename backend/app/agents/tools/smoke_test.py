@@ -9,7 +9,9 @@ from __future__ import annotations
 from agent_framework import tool
 
 
-@tool(name="smoke_test_greet", description="Returns a greeting message. Read-only, no side effects.")
+@tool(
+    name="smoke_test_greet", description="Returns a greeting message. Read-only, no side effects."
+)
 def smoke_test_greet(name: str = "World") -> str:
     """Return a greeting for the given name.
 

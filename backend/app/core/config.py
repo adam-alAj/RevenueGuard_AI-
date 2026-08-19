@@ -34,7 +34,9 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # --- Database ---
-    DATABASE_URL: str = "postgresql+asyncpg://revenueguard:revenueguard@localhost:5432/revenueguard"
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://revenueguard:revenueguard@localhost:5432/revenueguard"
+    )
 
     # --- Secrets (no defaults outside test mode) ---
     GEMINI_API_KEY: str = ""

@@ -97,20 +97,29 @@ CONTRACTS = [
 CONTRACT_LINES = [
     # Contract A: 2 lines totaling $10,000
     {
-        "id": _uuid(), "contract_id": CONTRACT_A,
-        "description": "Design", "quantity": 100,
-        "unit_price": Decimal("50"), "total": Decimal("5000"),
+        "id": _uuid(),
+        "contract_id": CONTRACT_A,
+        "description": "Design",
+        "quantity": 100,
+        "unit_price": Decimal("50"),
+        "total": Decimal("5000"),
     },
     {
-        "id": _uuid(), "contract_id": CONTRACT_A,
-        "description": "Development", "quantity": 100,
-        "unit_price": Decimal("50"), "total": Decimal("5000"),
+        "id": _uuid(),
+        "contract_id": CONTRACT_A,
+        "description": "Development",
+        "quantity": 100,
+        "unit_price": Decimal("50"),
+        "total": Decimal("5000"),
     },
     # Contract B: 1 line totaling $5,000
     {
-        "id": _uuid(), "contract_id": CONTRACT_B,
-        "description": "Support Hours", "quantity": 100,
-        "unit_price": Decimal("50"), "total": Decimal("5000"),
+        "id": _uuid(),
+        "contract_id": CONTRACT_B,
+        "description": "Support Hours",
+        "quantity": 100,
+        "unit_price": Decimal("50"),
+        "total": Decimal("5000"),
     },
 ]
 
@@ -156,39 +165,55 @@ INVOICES = [
 INVOICE_LINES = [
     # Invoice 1: $8,000 total (underbilling — contract was $10,000)
     {
-        "id": _uuid(), "invoice_id": INVOICE_1,
-        "description": "Design", "quantity": 100,
-        "unit_price": Decimal("40"), "total": Decimal("4000"),  # $40 vs $50 contract
+        "id": _uuid(),
+        "invoice_id": INVOICE_1,
+        "description": "Design",
+        "quantity": 100,
+        "unit_price": Decimal("40"),
+        "total": Decimal("4000"),  # $40 vs $50 contract
     },
     {
-        "id": _uuid(), "invoice_id": INVOICE_1,
-        "description": "Development", "quantity": 100,
-        "unit_price": Decimal("40"), "total": Decimal("4000"),  # $40 vs $50 contract
+        "id": _uuid(),
+        "invoice_id": INVOICE_1,
+        "description": "Development",
+        "quantity": 100,
+        "unit_price": Decimal("40"),
+        "total": Decimal("4000"),  # $40 vs $50 contract
     },
     # Invoice 2: $5,000 (matches contract)
     {
-        "id": _uuid(), "invoice_id": INVOICE_2,
-        "description": "Support Hours", "quantity": 100,
-        "unit_price": Decimal("50"), "total": Decimal("5000"),
+        "id": _uuid(),
+        "invoice_id": INVOICE_2,
+        "description": "Support Hours",
+        "quantity": 100,
+        "unit_price": Decimal("50"),
+        "total": Decimal("5000"),
     },
     # Invoice 3: $3,000 (standalone, overdue)
     {
-        "id": _uuid(), "invoice_id": INVOICE_3,
-        "description": "Consulting", "quantity": 40,
-        "unit_price": Decimal("75"), "total": Decimal("3000"),
+        "id": _uuid(),
+        "invoice_id": INVOICE_3,
+        "description": "Consulting",
+        "quantity": 40,
+        "unit_price": Decimal("75"),
+        "total": Decimal("3000"),
     },
 ]
 
 PAYMENTS = [
     # Payment 1: $4,000 from Customer A
     {
-        "id": PAYMENT_1, "customer_id": CUSTOMER_A,
-        "amount": Decimal("4000"), "payment_date": date(2026, 1, 20),
+        "id": PAYMENT_1,
+        "customer_id": CUSTOMER_A,
+        "amount": Decimal("4000"),
+        "payment_date": date(2026, 1, 20),
     },
     # Payment 2: $5,000 from Customer B (covers Invoice 2)
     {
-        "id": PAYMENT_2, "customer_id": CUSTOMER_B,
-        "amount": Decimal("5000"), "payment_date": date(2026, 1, 10),
+        "id": PAYMENT_2,
+        "customer_id": CUSTOMER_B,
+        "amount": Decimal("5000"),
+        "payment_date": date(2026, 1, 10),
     },
 ]
 
@@ -198,6 +223,7 @@ CREDIT_NOTES = []  # No credit notes in the default fixture
 # ---------------------------------------------------------------------------
 # Composite fixture for the full engine test
 # ---------------------------------------------------------------------------
+
 
 def get_full_context(today: date | None = None) -> dict:
     """Return a complete RuleContext-compatible dict for testing."""

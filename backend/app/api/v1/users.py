@@ -29,6 +29,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 # --- Request/Response Models ---
 
+
 class InviteUserRequest(BaseModel):
     email: EmailStr
     password: str
@@ -51,6 +52,7 @@ class UserResponse(BaseModel):
 
 
 # --- Endpoints ---
+
 
 @router.post(
     "",

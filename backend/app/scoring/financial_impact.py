@@ -128,6 +128,4 @@ def _to_decimal(value: Decimal | str | float, field_name: str) -> Decimal:
             return value
         return Decimal(str(value))
     except Exception as e:
-        raise ValueError(
-            f"Cannot convert {field_name}={value!r} to Decimal: {e}"
-        ) from e
+        raise ValueError(f"Cannot convert {field_name}={value!r} to Decimal: {e}") from e

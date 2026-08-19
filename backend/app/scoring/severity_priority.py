@@ -137,10 +137,7 @@ class SeverityClassifier:
         t = self.thresholds
 
         # Critical: high amount AND high confidence
-        if (
-            potential_leakage >= t.critical_amount
-            and confidence >= t.critical_confidence
-        ):
+        if potential_leakage >= t.critical_amount and confidence >= t.critical_confidence:
             return SeverityResult(
                 severity="critical",
                 reason=(

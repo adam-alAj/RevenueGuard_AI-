@@ -73,7 +73,9 @@ async def list_invoices(
     start = pagination.offset
     page_items = invoices[start : start + pagination.page_size]
 
-    return InvoiceListResponse(**paginate(page_items, total, pagination.page, pagination.page_size))
+    return InvoiceListResponse(
+        **paginate(page_items, total, pagination.page, pagination.page_size)
+    )
 
 
 @router.get("/{invoice_id}", response_model=InvoiceResponse)

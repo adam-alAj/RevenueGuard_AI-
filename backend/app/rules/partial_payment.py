@@ -46,8 +46,7 @@ class PartialPaymentRule(BaseRule):
             # Check if credit notes explain the outstanding balance
             inv_id = str(invoice["id"])
             credit_note_total = sum(
-                Decimal(str(cn["amount"]))
-                for cn in cn_by_invoice.get(inv_id, [])
+                Decimal(str(cn["amount"])) for cn in cn_by_invoice.get(inv_id, [])
             )
 
             # If credit notes cover the outstanding balance, no discrepancy
@@ -57,20 +56,22 @@ class PartialPaymentRule(BaseRule):
             # There's an unexplained partial payment discrepancy
             discrepancy = outstanding - credit_note_total
 
-            findings.append(LeakageFinding(
-                leakage_type=self.leakage_type,
-                description=(
-                    f"Invoice '{invoice.get('invoice_number', 'Unknown')}': "
-                    f"total ${inv_total:.2f}, outstanding ${outstanding:.2f}, "
-                    f"credit notes ${credit_note_total:.2f}, "
-                    f"unexplained gap ${discrepancy:.2f}"
-                ),
-                expected_amount=inv_total,
-                actual_amount=inv_total - outstanding,
-                potential_leakage=discrepancy,
-                customer_id=invoice.get("customer_id"),
-                contract_id=invoice.get("contract_id"),
-                invoice_id=invoice["id"],
-            ))
+            findings.append(
+                LeakageFinding(
+                    leakage_type=self.leakage_type,
+                    description=(
+                        f"Invoice '{invoice.get('invoice_number', 'Unknown')}': "
+                        f"total ${inv_total:.2f}, outstanding ${outstanding:.2f}, "
+                        f"credit notes ${credit_note_total:.2f}, "
+                        f"unexplained gap ${discrepancy:.2f}"
+                    ),
+                    expected_amount=inv_total,
+                    actual_amount=inv_total - outstanding,
+                    potential_leakage=discrepancy,
+                    customer_id=invoice.get("customer_id"),
+                    contract_id=invoice.get("contract_id"),
+                    invoice_id=invoice["id"],
+                )
+            )
 
         return findings

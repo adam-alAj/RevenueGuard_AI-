@@ -109,29 +109,27 @@ def _match_detected_to_ground_truth(
 
         if best_match is not None:
             used_gt.add(best_idx)
-            matched_pairs.append({
-                "detected": det,
-                "ground_truth": best_match,
-                "amount_error": abs(float(det.potential_leakage - best_match.expected_amount)),
-                "amount_error_pct": (
-                    abs(float(det.potential_leakage - best_match.expected_amount))
-                    / float(best_match.expected_amount)
-                    * 100
-                    if best_match.expected_amount > 0
-                    else 0.0
-                ),
-            })
+            matched_pairs.append(
+                {
+                    "detected": det,
+                    "ground_truth": best_match,
+                    "amount_error": abs(float(det.potential_leakage - best_match.expected_amount)),
+                    "amount_error_pct": (
+                        abs(float(det.potential_leakage - best_match.expected_amount))
+                        / float(best_match.expected_amount)
+                        * 100
+                        if best_match.expected_amount > 0
+                        else 0.0
+                    ),
+                }
+            )
 
     unmatched_gt = [
-        gt.description
-        for idx, gt in enumerate(ground_truth.true_positives)
-        if idx not in used_gt
+        gt.description for idx, gt in enumerate(ground_truth.true_positives) if idx not in used_gt
     ]
 
     unmatched_det = [
-        det.description
-        for det in detected
-        if not any(m["detected"] is det for m in matched_pairs)
+        det.description for det in detected if not any(m["detected"] is det for m in matched_pairs)
     ]
 
     return matched_pairs, unmatched_det, unmatched_gt
@@ -152,9 +150,7 @@ def compute_metrics(
     Returns:
         EvaluationMetrics with all computed metrics.
     """
-    matched, unmatched_det, unmatched_gt = _match_detected_to_ground_truth(
-        detected, ground_truth
-    )
+    matched, unmatched_det, unmatched_gt = _match_detected_to_ground_truth(detected, ground_truth)
 
     tp = len(matched)
     fp = len(unmatched_det)
@@ -190,7 +186,9 @@ def compute_metrics(
         rule_type = m["detected"].leakage_type
         if rule_type not in per_rule:
             per_rule[rule_type] = {
-                "detected": 0, "matched": 0, "missed": 0,
+                "detected": 0,
+                "matched": 0,
+                "missed": 0,
                 "total_amount_error_pct": 0.0,
             }
         per_rule[rule_type]["detected"] += 1
@@ -202,7 +200,9 @@ def compute_metrics(
         rule_type = det.leakage_type if hasattr(det, "leakage_type") else "unknown"
         if rule_type not in per_rule:
             per_rule[rule_type] = {
-                "detected": 0, "matched": 0, "missed": 0,
+                "detected": 0,
+                "matched": 0,
+                "missed": 0,
                 "total_amount_error_pct": 0.0,
             }
         per_rule[rule_type]["detected"] += 1
@@ -211,9 +211,7 @@ def compute_metrics(
     # Average amount error per rule
     for _rule_type, stats in per_rule.items():
         if stats["matched"] > 0:
-            stats["avg_amount_error_pct"] = (
-                stats["total_amount_error_pct"] / stats["matched"]
-            )
+            stats["avg_amount_error_pct"] = stats["total_amount_error_pct"] / stats["matched"]
         else:
             stats["avg_amount_error_pct"] = 0.0
         del stats["total_amount_error_pct"]

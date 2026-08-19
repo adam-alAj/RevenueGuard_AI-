@@ -28,9 +28,7 @@ class Rule(UUIDMixin, TenantMixin, TimestampMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     # Relationships
-    versions: Mapped[list[RuleVersion]] = relationship(
-        back_populates="rule", lazy="selectin"
-    )
+    versions: Mapped[list[RuleVersion]] = relationship(back_populates="rule", lazy="selectin")
 
 
 class RuleVersion(UUIDMixin, TenantMixin, TimestampMixin, Base):

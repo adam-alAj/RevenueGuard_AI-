@@ -147,9 +147,7 @@ class LeakageInvestigationWorkflow:
 
                 if not step_result.success:
                     # Contract analysis failure is non-fatal — continue with investigation
-                    logger.warning(
-                        "Contract analysis failed, continuing: %s", step_result.error
-                    )
+                    logger.warning("Contract analysis failed, continuing: %s", step_result.error)
 
             # Step 3: Investigation
             step_result = await self._step_investigation(
@@ -241,9 +239,7 @@ class LeakageInvestigationWorkflow:
         """Step 2: Analyze contract terms via Gemini."""
         start = time.time()
         try:
-            agent = create_contract_analysis_agent(
-                api_key=self.api_key, model=self.model
-            )
+            agent = create_contract_analysis_agent(api_key=self.api_key, model=self.model)
 
             prompt = (
                 f"Analyze contract {contract_id} for organization {organization_id}. "
@@ -286,9 +282,7 @@ class LeakageInvestigationWorkflow:
         """Step 3: Investigate the case — gather evidence, classify."""
         start = time.time()
         try:
-            agent = create_investigation_agent(
-                api_key=self.api_key, model=self.model
-            )
+            agent = create_investigation_agent(api_key=self.api_key, model=self.model)
 
             # Build context for the investigation
             context_parts = [
@@ -308,9 +302,7 @@ class LeakageInvestigationWorkflow:
             if actual_amount is not None:
                 context_parts.append(f"Actual amount: ${actual_amount:.2f}.")
             if state.contract_terms:
-                context_parts.append(
-                    f"Contract terms summary: {state.contract_terms.summary}"
-                )
+                context_parts.append(f"Contract terms summary: {state.contract_terms.summary}")
 
             prompt = " ".join(context_parts)
 
@@ -380,9 +372,7 @@ class LeakageInvestigationWorkflow:
         """Step 5: Recommend recovery action."""
         start = time.time()
         try:
-            agent = create_recovery_recommendation_agent(
-                api_key=self.api_key, model=self.model
-            )
+            agent = create_recovery_recommendation_agent(api_key=self.api_key, model=self.model)
 
             context_parts = [
                 f"Recommend recovery action for case {state.case_id}.",

@@ -174,6 +174,7 @@ class TestCreateTenantScopedTool:
 
     def test_tool_creation(self) -> None:
         """create_tenant_scoped_tool returns a callable tool."""
+
         async def my_func(**kwargs: object) -> str:
             return "result"
 
@@ -187,6 +188,7 @@ class TestCreateTenantScopedTool:
     @pytest.mark.asyncio
     async def test_tool_execution_writes_audit_row(self) -> None:
         """Tool execution writes a ToolExecution audit record."""
+
         async def my_func(organization_id: str, **kwargs: object) -> str:
             return f"data for {organization_id}"
 
@@ -222,6 +224,7 @@ class TestCreateTenantScopedTool:
     @pytest.mark.asyncio
     async def test_tool_execution_logs_error(self) -> None:
         """Tool execution logs errors in the audit record."""
+
         async def failing_func(**kwargs: object) -> str:
             raise ValueError("Something went wrong")
 
@@ -282,6 +285,7 @@ class TestCreateTenantScopedTool:
     @pytest.mark.asyncio
     async def test_tool_rejects_unauthorized_agent(self) -> None:
         """Tool rejects call from agent not in permitted list."""
+
         async def safe_func(**kwargs: object) -> str:
             return "should not reach here"
 

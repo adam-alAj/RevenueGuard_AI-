@@ -50,9 +50,7 @@ async def db_session():
     # Replace JSONB type compilation for SQLite
     from sqlalchemy.sql import compiler as sa_compiler
 
-    orig_visit_jsonb = getattr(
-        sa_compiler.GenericTypeCompiler, "visit_JSONB", None
-    )
+    orig_visit_jsonb = getattr(sa_compiler.GenericTypeCompiler, "visit_JSONB", None)
 
     def _visit_jsonb(self, type_, **kw):
         return "JSON"

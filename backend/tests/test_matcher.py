@@ -36,6 +36,7 @@ from app.services.resolution.review_queue import (
 # Canonicalization + matching integration test (the Acme Inc. example)
 # ---------------------------------------------------------------------------
 
+
 class TestAcmeIncResolution:
     """The canonical example: 4 variations of 'Acme' must resolve to one record."""
 
@@ -89,6 +90,7 @@ class TestAcmeIncResolution:
 # Similarity band tests
 # ---------------------------------------------------------------------------
 
+
 class TestSimilarityBands:
     def test_high_band(self) -> None:
         assert classify_match(0.90) == "high"
@@ -113,6 +115,7 @@ class TestSimilarityBands:
 # ---------------------------------------------------------------------------
 # Comparison function tests
 # ---------------------------------------------------------------------------
+
 
 class TestCompareExactId:
     def test_exact_match(self) -> None:
@@ -282,7 +285,9 @@ async def test_confirm_and_reject(db_session) -> None:
     await db_session.flush()
 
     # Reject it
-    rejected = await reject_match(db_session, org_id, erc2.id, reviewer_id, notes="Different company")
+    rejected = await reject_match(
+        db_session, org_id, erc2.id, reviewer_id, notes="Different company"
+    )
     assert rejected is not None
     assert rejected.status == "rejected"
 

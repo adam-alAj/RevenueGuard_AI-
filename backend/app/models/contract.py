@@ -52,9 +52,7 @@ class Contract(UUIDMixin, TenantMixin, TimestampMixin, Base):
 
     # Relationships
     customer: Mapped[Customer] = relationship(back_populates="contracts")
-    lines: Mapped[list[ContractLine]] = relationship(
-        back_populates="contract", lazy="selectin"
-    )
+    lines: Mapped[list[ContractLine]] = relationship(back_populates="contract", lazy="selectin")
 
 
 class ContractLine(UUIDMixin, TenantMixin, TimestampMixin, Base):

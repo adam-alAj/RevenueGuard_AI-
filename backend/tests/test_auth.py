@@ -27,6 +27,7 @@ from app.core.security import (
 # Password hashing tests
 # ---------------------------------------------------------------------------
 
+
 class TestPasswordHashing:
     def test_hash_password_is_not_plaintext(self) -> None:
         hashed = hash_password("mysecretpassword")
@@ -55,6 +56,7 @@ class TestPasswordHashing:
 # ---------------------------------------------------------------------------
 # JWT token tests
 # ---------------------------------------------------------------------------
+
 
 class TestJWTTokens:
     def _make_uuid(self) -> uuid.UUID:
@@ -96,7 +98,9 @@ class TestJWTTokens:
         token = create_access_token(self._make_uuid(), self._make_uuid(), "Owner")
         # Tamper with the payload
         parts = token.split(".")
-        tampered = parts[0] + "." + parts[1][:-1] + ("A" if parts[1][-1] != "A" else "B") + "." + parts[2]
+        tampered = (
+            parts[0] + "." + parts[1][:-1] + ("A" if parts[1][-1] != "A" else "B") + "." + parts[2]
+        )
         with pytest.raises(jwt.exceptions.PyJWTError):
             decode_token(tampered)
 
@@ -112,6 +116,7 @@ class TestJWTTokens:
 # ---------------------------------------------------------------------------
 # Token expiry tests
 # ---------------------------------------------------------------------------
+
 
 class TestTokenExpiry:
     def test_access_token_has_exp_claim(self) -> None:

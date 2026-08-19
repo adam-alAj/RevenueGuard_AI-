@@ -13,7 +13,6 @@ which resources. Resource "*" with action "*" means full access.
 
 """
 
-
 from alembic import op
 
 revision = "0002"

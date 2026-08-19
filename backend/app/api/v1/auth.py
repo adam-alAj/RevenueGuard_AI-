@@ -42,6 +42,7 @@ _refresh_tokens: dict[str, uuid.UUID] = {}  # jti -> user_id
 
 # --- Request/Response Models ---
 
+
 class RegisterRequest(BaseModel):
     organization_name: str
     organization_slug: str
@@ -75,6 +76,7 @@ class PasswordResetConfirm(BaseModel):
 
 
 # --- Endpoints ---
+
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(
@@ -209,7 +211,9 @@ async def login(
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh(req: RefreshRequest, db: Annotated[AsyncSession, Depends(get_db)]) -> TokenResponse:
+async def refresh(
+    req: RefreshRequest, db: Annotated[AsyncSession, Depends(get_db)]
+) -> TokenResponse:
     """Exchange a refresh token for a new access + refresh token pair (rotation)."""
     try:
         payload = decode_token(req.refresh_token)
@@ -325,7 +329,10 @@ async def password_reset_request(
 
         # In production: send reset_token via email
         # For MVP: return it in the response (would be removed in production)
-        return {"message": "If the email exists, a reset link has been sent.", "token": reset_token}
+        return {
+            "message": "If the email exists, a reset link has been sent.",
+            "token": reset_token,
+        }
 
     return {"message": "If the email exists, a reset link has been sent."}
 

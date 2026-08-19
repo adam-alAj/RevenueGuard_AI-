@@ -67,7 +67,8 @@ async def get_contract_lines(organization_id: str, contract_id: str) -> list[dic
     org_data = _get_org_data(organization_id)
     lines = org_data.get("contract_lines", [])
     return [
-        line for line in lines
+        line
+        for line in lines
         if str(line.get("contract_id")) == contract_id
         and str(line.get("organization_id")) == organization_id
     ]
@@ -88,7 +89,8 @@ async def get_invoice_lines(organization_id: str, invoice_id: str) -> list[dict[
     org_data = _get_org_data(organization_id)
     lines = org_data.get("invoice_lines", [])
     return [
-        line for line in lines
+        line
+        for line in lines
         if str(line.get("invoice_id")) == invoice_id
         and str(line.get("organization_id")) == organization_id
     ]
@@ -99,7 +101,8 @@ async def get_payments(organization_id: str, invoice_id: str) -> list[dict[str, 
     org_data = _get_org_data(organization_id)
     payments = org_data.get("payments", [])
     return [
-        p for p in payments
+        p
+        for p in payments
         if str(p.get("invoice_id")) == invoice_id
         and str(p.get("organization_id")) == organization_id
     ]
@@ -115,9 +118,7 @@ async def get_project(organization_id: str, project_id: str) -> dict[str, Any] |
     return None
 
 
-async def search_customer_history(
-    organization_id: str, customer_id: str
-) -> list[dict[str, Any]]:
+async def search_customer_history(organization_id: str, customer_id: str) -> list[dict[str, Any]]:
     """Search for all historical records related to a customer, scoped to org."""
     org_data = _get_org_data(organization_id)
     results = []
@@ -125,19 +126,28 @@ async def search_customer_history(
     # Find all contracts for this customer
     contracts = org_data.get("contracts", [])
     for c in contracts:
-        if str(c.get("customer_id")) == customer_id and str(c.get("organization_id")) == organization_id:
+        if (
+            str(c.get("customer_id")) == customer_id
+            and str(c.get("organization_id")) == organization_id
+        ):
             results.append({"type": "contract", "data": c})
 
     # Find all invoices for this customer
     invoices = org_data.get("invoices", [])
     for inv in invoices:
-        if str(inv.get("customer_id")) == customer_id and str(inv.get("organization_id")) == organization_id:
+        if (
+            str(inv.get("customer_id")) == customer_id
+            and str(inv.get("organization_id")) == organization_id
+        ):
             results.append({"type": "invoice", "data": inv})
 
     # Find all payments for this customer
     payments = org_data.get("payments", [])
     for p in payments:
-        if str(p.get("customer_id")) == customer_id and str(p.get("organization_id")) == organization_id:
+        if (
+            str(p.get("customer_id")) == customer_id
+            and str(p.get("organization_id")) == organization_id
+        ):
             results.append({"type": "payment", "data": p})
 
     return results
@@ -163,7 +173,8 @@ async def search_contract_amendments(
     org_data = _get_org_data(organization_id)
     contracts = org_data.get("contracts", [])
     return [
-        c for c in contracts
+        c
+        for c in contracts
         if str(c.get("parent_contract_id")) == contract_id
         and str(c.get("organization_id")) == organization_id
     ]

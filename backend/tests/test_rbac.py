@@ -119,6 +119,7 @@ class TestOwnerCanViewerCannot:
 # Cross-tenant isolation tests
 # ---------------------------------------------------------------------------
 
+
 class TestCrossTenantIsolation:
     """Verify that users from different organizations are isolated."""
 
@@ -163,6 +164,7 @@ class TestCrossTenantIsolation:
 # ---------------------------------------------------------------------------
 # Secret leakage tests
 # ---------------------------------------------------------------------------
+
 
 class TestNoSecretLeakage:
     """Ensure no secret value appears in tokens or would be exposed in responses."""

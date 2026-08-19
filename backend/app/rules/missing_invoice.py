@@ -34,10 +34,7 @@ class MissingInvoiceRule(BaseRule):
             contract_id = project.get("contract_id")
 
             # Check if there's an invoice linked to this project
-            has_invoice = any(
-                inv["project_id"] == project_id
-                for inv in ctx.invoices
-            )
+            has_invoice = any(inv["project_id"] == project_id for inv in ctx.invoices)
             if has_invoice:
                 continue
 
@@ -53,20 +50,24 @@ class MissingInvoiceRule(BaseRule):
             if contract_id:
                 for cl in ctx.contract_lines:
                     if cl["contract_id"] == contract_id:
-                        expected_amount += Decimal(str(cl["quantity"])) * Decimal(str(cl["unit_price"]))
+                        expected_amount += Decimal(str(cl["quantity"])) * Decimal(
+                            str(cl["unit_price"])
+                        )
 
-            findings.append(LeakageFinding(
-                leakage_type=self.leakage_type,
-                description=(
-                    f"Project '{project.get('name', 'Unknown')}' is completed "
-                    f"but has no linked invoice"
-                ),
-                expected_amount=expected_amount,
-                actual_amount=Decimal("0"),
-                potential_leakage=expected_amount,
-                customer_id=project.get("customer_id"),
-                contract_id=contract_id,
-                project_id=project_id,
-            ))
+            findings.append(
+                LeakageFinding(
+                    leakage_type=self.leakage_type,
+                    description=(
+                        f"Project '{project.get('name', 'Unknown')}' is completed "
+                        f"but has no linked invoice"
+                    ),
+                    expected_amount=expected_amount,
+                    actual_amount=Decimal("0"),
+                    potential_leakage=expected_amount,
+                    customer_id=project.get("customer_id"),
+                    contract_id=contract_id,
+                    project_id=project_id,
+                )
+            )
 
         return findings

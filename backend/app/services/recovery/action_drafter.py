@@ -331,9 +331,7 @@ class ActionDrafter:
             raise ActionDrafterError("Cross-tenant access denied")
 
         if draft.status == "action_completed":
-            raise ActionDrafterError(
-                f"Cannot cancel draft {draft_id}: already completed."
-            )
+            raise ActionDrafterError(f"Cannot cancel draft {draft_id}: already completed.")
 
         draft.status = "cancelled"
         return draft

@@ -67,28 +67,31 @@ class ContractExpirationRule(BaseRule):
             expected_amount = Decimal("0")
             for cl in ctx.contract_lines:
                 if str(cl["contract_id"]) == str(contract_id):
-                    expected_amount += Decimal(str(cl["quantity"])) * Decimal(str(cl["unit_price"]))
+                    expected_amount += Decimal(str(cl["quantity"])) * Decimal(
+                        str(cl["unit_price"])
+                    )
 
             # Check if there's an invoice for this project
             has_invoice = any(
-                str(inv.get("project_id")) == str(project["id"])
-                for inv in ctx.invoices
+                str(inv.get("project_id")) == str(project["id"]) for inv in ctx.invoices
             )
             actual_amount = Decimal("0") if not has_invoice else expected_amount
 
-            findings.append(LeakageFinding(
-                leakage_type=self.leakage_type,
-                description=(
-                    f"Project '{project.get('name', 'Unknown')}': "
-                    f"service delivered after contract '{contract.get('name', 'Unknown')}' "
-                    f"expired on {expiration_date.isoformat()}, no renewal found"
-                ),
-                expected_amount=expected_amount,
-                actual_amount=actual_amount,
-                potential_leakage=expected_amount - actual_amount,
-                customer_id=project.get("customer_id"),
-                contract_id=contract_id,
-                project_id=project["id"],
-            ))
+            findings.append(
+                LeakageFinding(
+                    leakage_type=self.leakage_type,
+                    description=(
+                        f"Project '{project.get('name', 'Unknown')}': "
+                        f"service delivered after contract '{contract.get('name', 'Unknown')}' "
+                        f"expired on {expiration_date.isoformat()}, no renewal found"
+                    ),
+                    expected_amount=expected_amount,
+                    actual_amount=actual_amount,
+                    potential_leakage=expected_amount - actual_amount,
+                    customer_id=project.get("customer_id"),
+                    contract_id=contract_id,
+                    project_id=project["id"],
+                )
+            )
 
         return findings

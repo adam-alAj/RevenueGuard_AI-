@@ -28,6 +28,7 @@ router = APIRouter(prefix="/rules", tags=["rules"])
 
 # --- Response Models ---
 
+
 class RuleResponse(BaseModel):
     id: uuid.UUID
     name: str
@@ -58,6 +59,7 @@ class RunResponse(BaseModel):
 
 
 # --- Endpoints ---
+
 
 @router.post(
     "/run",

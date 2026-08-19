@@ -91,7 +91,10 @@ async def _upsert_contract(
             await db.flush()
             return False, str(existing.id)
 
-    contract = Contract(organization_id=org_id, **{k: v for k, v in data.items() if v is not None and k != "customer_external_id"})
+    contract = Contract(
+        organization_id=org_id,
+        **{k: v for k, v in data.items() if v is not None and k != "customer_external_id"},
+    )
     db.add(contract)
     await db.flush()
     return True, str(contract.id)
@@ -128,7 +131,10 @@ async def _upsert_project(
             await db.flush()
             return False, str(existing.id)
 
-    project = Project(organization_id=org_id, **{k: v for k, v in data.items() if v is not None and k != "customer_external_id"})
+    project = Project(
+        organization_id=org_id,
+        **{k: v for k, v in data.items() if v is not None and k != "customer_external_id"},
+    )
     db.add(project)
     await db.flush()
     return True, str(project.id)
@@ -149,13 +155,23 @@ async def _upsert_invoice(
         existing = result.scalar_one_or_none()
         if existing:
             for key, value in data.items():
-                if value is not None and key not in ("customer_external_id", "contract_external_id", "project_external_id") and hasattr(existing, key):
+                if (
+                    value is not None
+                    and key
+                    not in ("customer_external_id", "contract_external_id", "project_external_id")
+                    and hasattr(existing, key)
+                ):
                     setattr(existing, key, value)
             await db.flush()
             return False, str(existing.id)
 
     # Resolve FK references
-    invoice_data = {k: v for k, v in data.items() if v is not None and k not in ("customer_external_id", "contract_external_id", "project_external_id")}
+    invoice_data = {
+        k: v
+        for k, v in data.items()
+        if v is not None
+        and k not in ("customer_external_id", "contract_external_id", "project_external_id")
+    }
     customer_id = await _resolve_customer_id(db, org_id, data.get("customer_external_id"))
     if customer_id:
         invoice_data["customer_id"] = customer_id

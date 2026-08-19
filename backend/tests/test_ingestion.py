@@ -42,6 +42,7 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 # Parser tests
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeColumnName:
     def test_simple(self) -> None:
         assert normalize_column_name("Name") == "name"
@@ -134,6 +135,7 @@ class TestReadCSV:
 # ---------------------------------------------------------------------------
 # Validator tests
 # ---------------------------------------------------------------------------
+
 
 class TestValidateCustomer:
     def test_valid_row(self) -> None:
@@ -231,6 +233,7 @@ class TestValidatePayment:
 # Import integration tests (require DB session)
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_import_customers_from_csv(db_session: AsyncSession) -> None:
     """Import customers from CSV — creates Customer records."""
@@ -256,9 +259,7 @@ async def test_import_customers_from_csv(db_session: AsyncSession) -> None:
     assert job.records_rejected == 0
 
     # Verify customers were created
-    result = await db_session.execute(
-        select(Customer).where(Customer.organization_id == org.id)
-    )
+    result = await db_session.execute(select(Customer).where(Customer.organization_id == org.id))
     customers = list(result.scalars().all())
     assert len(customers) == 6
 
@@ -307,9 +308,7 @@ async def test_import_idempotency(db_session: AsyncSession) -> None:
         file_name="sample_customers.csv",
     )
 
-    result1 = await db_session.execute(
-        select(Customer).where(Customer.organization_id == org.id)
-    )
+    result1 = await db_session.execute(select(Customer).where(Customer.organization_id == org.id))
     count1 = len(list(result1.scalars().all()))
 
     # Second import — should not create duplicates
@@ -321,9 +320,7 @@ async def test_import_idempotency(db_session: AsyncSession) -> None:
         file_name="sample_customers.csv",
     )
 
-    result2 = await db_session.execute(
-        select(Customer).where(Customer.organization_id == org.id)
-    )
+    result2 = await db_session.execute(select(Customer).where(Customer.organization_id == org.id))
     count2 = len(list(result2.scalars().all()))
 
     assert count1 == count2, f"Idempotency failed: {count1} before, {count2} after re-import"

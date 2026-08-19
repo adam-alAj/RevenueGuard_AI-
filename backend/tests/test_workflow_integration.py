@@ -74,7 +74,9 @@ class TestWorkflowState:
             classification=InvestigationClassification.confirmed,
             confidence=0.9,
             explanation="Confirmed underbilling.",
-            evidence_refs=[{"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}],
+            evidence_refs=[
+                {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}
+            ],
         )
         assert state.investigation_result.classification == InvestigationClassification.confirmed
 
@@ -92,34 +94,49 @@ class TestWorkflowStepOrdering:
 
         # Mock all agent calls
         mock_contract_response = MagicMock()
-        mock_contract_response.text = json.dumps({
-            "billing_frequency": "monthly",
-            "unit_pricing_model": "fixed",
-            "base_rate": 1000.0,
-            "renewal_terms": "auto_renew",
-            "summary": "Test contract",
-        })
+        mock_contract_response.text = json.dumps(
+            {
+                "billing_frequency": "monthly",
+                "unit_pricing_model": "fixed",
+                "base_rate": 1000.0,
+                "renewal_terms": "auto_renew",
+                "summary": "Test contract",
+            }
+        )
 
         mock_investigation_response = MagicMock()
-        mock_investigation_response.text = json.dumps({
-            "classification": "confirmed",
-            "confidence": 0.9,
-            "explanation": "Confirmed leakage.",
-            "evidence_refs": [{"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}],
-        })
+        mock_investigation_response.text = json.dumps(
+            {
+                "classification": "confirmed",
+                "confidence": 0.9,
+                "explanation": "Confirmed leakage.",
+                "evidence_refs": [
+                    {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}
+                ],
+            }
+        )
 
         mock_recovery_response = MagicMock()
-        mock_recovery_response.text = json.dumps({
-            "action": "create_invoice_draft",
-            "urgency": "within_week",
-            "rationale": "Invoice needed.",
-            "requires_approval": True,
-        })
+        mock_recovery_response.text = json.dumps(
+            {
+                "action": "create_invoice_draft",
+                "urgency": "within_week",
+                "rationale": "Invoice needed.",
+                "requires_approval": True,
+            }
+        )
 
-        with patch("app.workflows.leakage_investigation_workflow.create_contract_analysis_agent") as mock_ca, \
-             patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv, \
-             patch("app.workflows.leakage_investigation_workflow.create_recovery_recommendation_agent") as mock_rec:
-
+        with (
+            patch(
+                "app.workflows.leakage_investigation_workflow.create_contract_analysis_agent"
+            ) as mock_ca,
+            patch(
+                "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+            ) as mock_inv,
+            patch(
+                "app.workflows.leakage_investigation_workflow.create_recovery_recommendation_agent"
+            ) as mock_rec,
+        ):
             # Setup mocks
             mock_ca_agent = MagicMock()
             mock_ca_agent.run = AsyncMock(return_value=mock_contract_response)
@@ -173,15 +190,25 @@ class TestWorkflowAutoClose:
         workflow = LeakageInvestigationWorkflow(api_key="test-key")
 
         mock_response = MagicMock()
-        mock_response.text = json.dumps({
-            "classification": "false_positive",
-            "confidence": 0.85,
-            "explanation": "Not actual leakage — pricing was amended.",
-            "evidence_refs": [{"evidence_id": "ev-001", "evidence_type": "contract_amendment", "relevance": "test"}],
-            "false_positive_reason": "Contract amended to reflect new pricing.",
-        })
+        mock_response.text = json.dumps(
+            {
+                "classification": "false_positive",
+                "confidence": 0.85,
+                "explanation": "Not actual leakage — pricing was amended.",
+                "evidence_refs": [
+                    {
+                        "evidence_id": "ev-001",
+                        "evidence_type": "contract_amendment",
+                        "relevance": "test",
+                    }
+                ],
+                "false_positive_reason": "Contract amended to reflect new pricing.",
+            }
+        )
 
-        with patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv:
+        with patch(
+            "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+        ) as mock_inv:
             mock_agent = MagicMock()
             mock_agent.run = AsyncMock(return_value=mock_response)
             mock_inv.return_value = mock_agent
@@ -208,15 +235,21 @@ class TestWorkflowAutoClose:
         workflow = LeakageInvestigationWorkflow(api_key="test-key")
 
         mock_response = MagicMock()
-        mock_response.text = json.dumps({
-            "classification": "legitimate_exception",
-            "confidence": 0.95,
-            "explanation": "Credit note explains the discrepancy.",
-            "evidence_refs": [{"evidence_id": "ev-002", "evidence_type": "credit_note", "relevance": "test"}],
-            "legitimate_exception_reason": "Credit note CN-001 covers the gap.",
-        })
+        mock_response.text = json.dumps(
+            {
+                "classification": "legitimate_exception",
+                "confidence": 0.95,
+                "explanation": "Credit note explains the discrepancy.",
+                "evidence_refs": [
+                    {"evidence_id": "ev-002", "evidence_type": "credit_note", "relevance": "test"}
+                ],
+                "legitimate_exception_reason": "Credit note CN-001 covers the gap.",
+            }
+        )
 
-        with patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv:
+        with patch(
+            "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+        ) as mock_inv:
             mock_agent = MagicMock()
             mock_agent.run = AsyncMock(return_value=mock_response)
             mock_inv.return_value = mock_agent
@@ -250,12 +283,16 @@ class TestCrossTenantIsolation:
         store = {
             "org-A": {
                 "customers": [{"id": "cust-A1", "organization_id": "org-A", "name": "Acme A"}],
-                "contracts": [{"id": "cont-A1", "organization_id": "org-A", "customer_id": "cust-A1"}],
+                "contracts": [
+                    {"id": "cont-A1", "organization_id": "org-A", "customer_id": "cust-A1"}
+                ],
                 "payments": [{"id": "pay-A1", "organization_id": "org-A", "invoice_id": "inv-A1"}],
             },
             "org-B": {
                 "customers": [{"id": "cust-B1", "organization_id": "org-B", "name": "Globex B"}],
-                "contracts": [{"id": "cont-B1", "organization_id": "org-B", "customer_id": "cust-B1"}],
+                "contracts": [
+                    {"id": "cont-B1", "organization_id": "org-B", "customer_id": "cust-B1"}
+                ],
                 "payments": [{"id": "pay-B1", "organization_id": "org-B", "invoice_id": "inv-B1"}],
             },
         }
@@ -316,24 +353,35 @@ class TestAgentExecutionTrail:
         workflow = LeakageInvestigationWorkflow(api_key="test-key")
 
         mock_response = MagicMock()
-        mock_response.text = json.dumps({
-            "classification": "confirmed",
-            "confidence": 0.9,
-            "explanation": "Confirmed.",
-            "evidence_refs": [{"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}],
-        })
+        mock_response.text = json.dumps(
+            {
+                "classification": "confirmed",
+                "confidence": 0.9,
+                "explanation": "Confirmed.",
+                "evidence_refs": [
+                    {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}
+                ],
+            }
+        )
 
         mock_recovery = MagicMock()
-        mock_recovery.text = json.dumps({
-            "action": "send_payment_reminder",
-            "urgency": "within_week",
-            "rationale": "Payment reminder needed.",
-            "requires_approval": False,
-        })
+        mock_recovery.text = json.dumps(
+            {
+                "action": "send_payment_reminder",
+                "urgency": "within_week",
+                "rationale": "Payment reminder needed.",
+                "requires_approval": False,
+            }
+        )
 
-        with patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv, \
-             patch("app.workflows.leakage_investigation_workflow.create_recovery_recommendation_agent") as mock_rec:
-
+        with (
+            patch(
+                "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+            ) as mock_inv,
+            patch(
+                "app.workflows.leakage_investigation_workflow.create_recovery_recommendation_agent"
+            ) as mock_rec,
+        ):
             mock_inv_agent = MagicMock()
             mock_inv_agent.run = AsyncMock(return_value=mock_response)
             mock_inv.return_value = mock_inv_agent
@@ -367,7 +415,9 @@ class TestAgentExecutionTrail:
         workflow = LeakageInvestigationWorkflow(api_key="test-key")
 
         # Make investigation agent fail
-        with patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv:
+        with patch(
+            "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+        ) as mock_inv:
             mock_agent = MagicMock()
             mock_agent.run = AsyncMock(side_effect=Exception("Gemini API error"))
             mock_inv.return_value = mock_agent
@@ -379,9 +429,7 @@ class TestAgentExecutionTrail:
             )
 
         # Investigation step should have failed
-        inv_step = next(
-            (s for s in execution.steps if s.step_name == "investigation"), None
-        )
+        inv_step = next((s for s in execution.steps if s.step_name == "investigation"), None)
         assert inv_step is not None
         assert inv_step.success is False
         assert "Gemini API error" in inv_step.error
@@ -423,7 +471,9 @@ class TestWorkflowCheckpointing:
             classification=InvestigationClassification.confirmed,
             confidence=0.9,
             explanation="Confirmed.",
-            evidence_refs=[{"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}],
+            evidence_refs=[
+                {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}
+            ],
         )
         state.recovery_recommendation = RecoveryRecommendation(
             action=RecoveryActionType.create_invoice_draft,
@@ -435,7 +485,9 @@ class TestWorkflowCheckpointing:
         json_str = json.dumps(data, default=str)
         restored = WorkflowState(**json.loads(json_str))
 
-        assert restored.investigation_result.classification == InvestigationClassification.confirmed
+        assert (
+            restored.investigation_result.classification == InvestigationClassification.confirmed
+        )
         assert restored.recovery_recommendation.action == RecoveryActionType.create_invoice_draft
 
 
@@ -448,14 +500,20 @@ class TestWorkflowWithoutContract:
         workflow = LeakageInvestigationWorkflow(api_key="test-key")
 
         mock_response = MagicMock()
-        mock_response.text = json.dumps({
-            "classification": "confirmed",
-            "confidence": 0.8,
-            "explanation": "Confirmed without contract analysis.",
-            "evidence_refs": [{"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}],
-        })
+        mock_response.text = json.dumps(
+            {
+                "classification": "confirmed",
+                "confidence": 0.8,
+                "explanation": "Confirmed without contract analysis.",
+                "evidence_refs": [
+                    {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "test"}
+                ],
+            }
+        )
 
-        with patch("app.workflows.leakage_investigation_workflow.create_investigation_agent") as mock_inv:
+        with patch(
+            "app.workflows.leakage_investigation_workflow.create_investigation_agent"
+        ) as mock_inv:
             mock_agent = MagicMock()
             mock_agent.run = AsyncMock(return_value=mock_response)
             mock_inv.return_value = mock_agent

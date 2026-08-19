@@ -207,9 +207,7 @@ class TestFormatCurrency:
 
     def test_non_usd_currency(self) -> None:
         """Non-USD currencies use the currency code."""
-        result = FinancialImpactCalculator.format_currency(
-            Decimal("1234.56"), currency="EUR"
-        )
+        result = FinancialImpactCalculator.format_currency(Decimal("1234.56"), currency="EUR")
         assert result == "EUR 1,234.56"
 
 

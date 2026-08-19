@@ -111,6 +111,4 @@ def parse_contract_terms(response_text: str) -> ContractTerms:
         except (json.JSONDecodeError, ValueError):
             pass
 
-    raise ValueError(
-        f"Could not parse ContractTerms from response: {response_text[:200]}..."
-    )
+    raise ValueError(f"Could not parse ContractTerms from response: {response_text[:200]}...")

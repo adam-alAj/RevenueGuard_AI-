@@ -179,8 +179,14 @@ class TestClassificationContributions:
 
     def test_false_positive_lowest(self) -> None:
         """False positive has the lowest contribution."""
-        assert CLASSIFICATION_CONTRIBUTION["false_positive"] <= CLASSIFICATION_CONTRIBUTION["uncertain"]
-        assert CLASSIFICATION_CONTRIBUTION["legitimate_exception"] <= CLASSIFICATION_CONTRIBUTION["uncertain"]
+        assert (
+            CLASSIFICATION_CONTRIBUTION["false_positive"]
+            <= CLASSIFICATION_CONTRIBUTION["uncertain"]
+        )
+        assert (
+            CLASSIFICATION_CONTRIBUTION["legitimate_exception"]
+            <= CLASSIFICATION_CONTRIBUTION["uncertain"]
+        )
 
     def test_unknown_classification_rejected(self) -> None:
         """Unknown classification is rejected by validation."""
