@@ -434,7 +434,7 @@ class TestRuleMap:
 
     def test_leakage_types(self) -> None:
         expected = {"missing_invoice", "underbilling", "pricing_mismatch",
-                     "uncollected_invoice", "partial_payment", "contract_expiration"}
+                     "overdue_invoice", "partial_payment", "contract_expiration"}
         assert set(RULE_MAP.keys()) == expected
 
     def test_all_rules_have_defaults(self) -> None:

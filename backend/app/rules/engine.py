@@ -219,11 +219,13 @@ async def run_rules(
             continue
 
         # Load context and evaluate
+        execution_id = str(uuid.uuid4())
         ctx = await _load_context(db, org_id, version, today)
         findings = rule_impl.evaluate(ctx)
 
         # Persist findings as RevenueLeakageCases
         for finding in findings:
+            correlation_id = finding.correlation_id or execution_id
             case = RevenueLeakageCase(
                 organization_id=org_id,
                 case_number=_next_case_number(org_id),
@@ -239,6 +241,7 @@ async def run_rules(
                 recoverable_amount=finding.potential_leakage,
                 description=finding.description,
                 rule_version_id=version.id,
+                correlation_id=correlation_id,
             )
             db.add(case)
             all_cases.append(case)

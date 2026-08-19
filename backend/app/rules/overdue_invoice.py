@@ -14,7 +14,7 @@ from app.rules.base import BaseRule, LeakageFinding, RuleContext
 
 
 class OverdueInvoiceRule(BaseRule):
-    leakage_type = "uncollected_invoice"
+    leakage_type = "overdue_invoice"
     name = "Overdue Invoice"
     description = "Invoice past due date with outstanding balance"
     default_parameters = {"grace_period_days": 0}

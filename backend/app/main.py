@@ -51,6 +51,7 @@ from app.api.v1.invoices import router as invoices_router
 from app.api.v1.leakage import router as leakage_router
 from app.api.v1.leakage_approval import router as leakage_approval_router
 from app.api.v1.leakage_inbox import router as leakage_inbox_router
+from app.api.v1.observability import router as observability_router
 from app.api.v1.payments import router as payments_router
 from app.api.v1.recovery import router as recovery_router
 from app.api.v1.rules import router as rules_router
@@ -78,5 +79,6 @@ for r in (
     payments_router,
     search_router,
     customers_health_router,
+    observability_router,
 ):
     app.include_router(r, prefix=API_PREFIX)

@@ -17,6 +17,7 @@ class LeakageType(str, enum.Enum):
     subscription_renewal = "subscription_renewal"
     late_billing = "late_billing"
     uncollected_invoice = "uncollected_invoice"
+    overdue_invoice = "overdue_invoice"
     partial_payment = "partial_payment"
     reconciliation_failure = "reconciliation_failure"
     incorrect_credit_note = "incorrect_credit_note"

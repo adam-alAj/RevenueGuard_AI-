@@ -1,0 +1,61 @@
+name: Evaluation Gate
+
+on:
+  push:
+    branches: [main, phase-*]
+  pull_request:
+    branches: [main]
+  # Manual trigger for real-Gemini runs
+  workflow_dispatch:
+    inputs:
+      use_real_gemini:
+        description: "Run with real Gemini API (requires GEMINI_API_KEY)"
+        required: false
+        default: "false"
+        type: boolean
+
+jobs:
+  evaluation:
+    name: Evaluation Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -e ".[dev]"
+
+      - name: Run evaluation pipeline (mocked — no API cost)
+        if: ${{ github.event.inputs.use_real_gemini != 'true' }}
+        run: |
+          cd backend
+          python -m eval.run_evaluation
+
+      - name: Run evaluation with real Gemini (periodic/manual)
+        if: ${{ github.event.inputs.use_real_gemini == 'true' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          cd backend
+          python -m eval.run_evaluation --real-gemini
+
+      - name: Verify CI gate fails on regression
+        run: |
+          cd backend
+          python -c "
+          from eval.run_evaluation import run_evaluation_with_disabled_rules
+          from eval.metrics import format_metrics_report
+          # Disabling missing_invoice should cause recall to drop below floor
+          metrics = run_evaluation_with_disabled_rules(['missing_invoice'])
+          print(format_metrics_report(metrics))
+          assert metrics.recall < 0.90, f'CI gate did not fail: recall={metrics.recall}'
+          print('CI gate correctly detected regression.')
+          "
