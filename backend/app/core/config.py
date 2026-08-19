@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     JWT_SECRET: str = ""
 
+    # --- CORS ---
+    CORS_ORIGINS: str = ""
+
     # --- Agent Framework ---
     GEMINI_MODEL: str = "gemini-2.0-flash"
 
