@@ -136,16 +136,23 @@ async def get_revenue_health(
         if case.get("customer_id") == customer_id and case.get("organization_id") == org_id:
             potential_leakage += Decimal(str(case.get("potential_leakage", 0)))
             recovered_amount += Decimal(str(case.get("recovered_amount", 0)))
-            if case.get("status") not in ("closed", "recovered", "false_positive",
-                                           "legitimate_exception", "rejected"):
+            if case.get("status") not in (
+                "closed",
+                "recovered",
+                "false_positive",
+                "legitimate_exception",
+                "rejected",
+            ):
                 open_cases += 1
 
     # Count active subscriptions
     active_subs = 0
     for sub in _health_subscription_store.values():
-        if (sub.get("customer_id") == customer_id
-                and sub.get("organization_id") == org_id
-                and sub.get("status") == "active"):
+        if (
+            sub.get("customer_id") == customer_id
+            and sub.get("organization_id") == org_id
+            and sub.get("status") == "active"
+        ):
             active_subs += 1
 
     return RevenueHealthResponse(

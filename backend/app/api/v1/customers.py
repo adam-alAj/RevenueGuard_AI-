@@ -92,7 +92,8 @@ async def list_customers(
     if search:
         search_lower = search.lower()
         customers = [
-            c for c in customers
+            c
+            for c in customers
             if search_lower in c.get("name", "").lower()
             or search_lower in (c.get("email") or "").lower()
         ]

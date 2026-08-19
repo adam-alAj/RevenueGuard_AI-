@@ -221,11 +221,13 @@ class TestInvestigationAgentInjectionResistance:
             InvestigationResult,
         )
 
-        evidence = [EvidenceReference(
-            evidence_id="ev-001",
-            evidence_type="invoice",
-            relevance="Shows billing discrepancy",
-        )]
+        evidence = [
+            EvidenceReference(
+                evidence_id="ev-001",
+                evidence_type="invoice",
+                relevance="Shows billing discrepancy",
+            )
+        ]
 
         # Valid classification
         result = InvestigationResult(

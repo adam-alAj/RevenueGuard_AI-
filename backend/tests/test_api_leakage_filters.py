@@ -134,6 +134,7 @@ class TestLeakageFilters:
         cases = list(_leakage_store.values())
         # Simulate the same filtering logic as the endpoint
         from app.api.v1.leakage_inbox import _leakage_store as store
+
         cases = [c for c in store.values() if c.get("organization_id") == ORG_A]
 
         if filters.get("leakage_type"):
@@ -160,8 +161,12 @@ class TestLeakageFilters:
             cases = [c for c in cases if c["assigned_to"] == filters["assigned_to"]]
         if filters.get("search"):
             q = filters["search"].lower()
-            cases = [c for c in cases if q in c.get("case_number", "").lower()
-                     or q in (c.get("description") or "").lower()]
+            cases = [
+                c
+                for c in cases
+                if q in c.get("case_number", "").lower()
+                or q in (c.get("description") or "").lower()
+            ]
 
         return cases
 
@@ -227,8 +232,11 @@ class TestLeakageFilters:
 
     def test_filter_unassigned(self) -> None:
         """Filtering by unassigned returns cases with no assignee."""
-        cases = [c for c in _leakage_store.values()
-                 if c.get("organization_id") == ORG_A and c.get("assigned_to") is None]
+        cases = [
+            c
+            for c in _leakage_store.values()
+            if c.get("organization_id") == ORG_A and c.get("assigned_to") is None
+        ]
         assert len(cases) == 1  # case-003
         assert cases[0]["case_id"] == "case-003"
 
@@ -268,9 +276,9 @@ class TestComposedFilters:
 
     def _apply_filters(self, **filters: object) -> list[dict]:
         """Apply composed filters to the seed data."""
-        cases = [c for c in _leakage_store.values()
-                 if c.get("organization_id") == ORG_A]
+        cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         from app.api.v1.leakage_inbox import _leakage_store as store
+
         cases = [c for c in store.values() if c.get("organization_id") == ORG_A]
 
         if filters.get("leakage_type"):
@@ -297,8 +305,12 @@ class TestComposedFilters:
             cases = [c for c in cases if c["assigned_to"] == filters["assigned_to"]]
         if filters.get("search"):
             q = filters["search"].lower()
-            cases = [c for c in cases if q in c.get("case_number", "").lower()
-                     or q in (c.get("description") or "").lower()]
+            cases = [
+                c
+                for c in cases
+                if q in c.get("case_number", "").lower()
+                or q in (c.get("description") or "").lower()
+            ]
         return cases
 
     def test_type_plus_status(self) -> None:
@@ -349,24 +361,21 @@ class TestLeakageSorting:
 
     def test_sort_by_created_at_desc(self) -> None:
         """Default sort is created_at descending (newest first)."""
-        cases = [c for c in _leakage_store.values()
-                 if c.get("organization_id") == ORG_A]
+        cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         cases.sort(key=lambda x: x["created_at"], reverse=True)
         assert cases[0]["case_id"] == "case-005"  # Jul 20
         assert cases[-1]["case_id"] == "case-001"  # Jun 1
 
     def test_sort_by_amount_desc(self) -> None:
         """Sort by potential_leakage descending."""
-        cases = [c for c in _leakage_store.values()
-                 if c.get("organization_id") == ORG_A]
+        cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         cases.sort(key=lambda x: float(x["potential_leakage"]), reverse=True)
         assert cases[0]["case_id"] == "case-001"  # $25,000
         assert cases[-1]["case_id"] == "case-004"  # $750
 
     def test_sort_by_case_number_asc(self) -> None:
         """Sort by case number ascending."""
-        cases = [c for c in _leakage_store.values()
-                 if c.get("organization_id") == ORG_A]
+        cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         cases.sort(key=lambda x: x["case_number"])
         assert cases[0]["case_number"] == "RL-000001"
         assert cases[-1]["case_number"] == "RL-000005"
@@ -388,10 +397,8 @@ class TestCrossTenantIsolation:
 
     def test_org_a_excludes_org_b_cases(self) -> None:
         """Cases from Org B are excluded when filtering by Org A."""
-        org_a_cases = [c for c in _leakage_store.values()
-                       if c.get("organization_id") == ORG_A]
-        org_b_cases = [c for c in _leakage_store.values()
-                       if c.get("organization_id") == ORG_B]
+        org_a_cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
+        org_b_cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_B]
 
         assert len(org_a_cases) == 5
         assert len(org_b_cases) == 1
@@ -400,9 +407,11 @@ class TestCrossTenantIsolation:
 
     def test_org_b_filter_does_not_leak_to_org_a(self) -> None:
         """Org B's customer_id filter doesn't affect Org A results."""
-        org_a_cust = [c for c in _leakage_store.values()
-                      if c.get("organization_id") == ORG_A
-                      and c.get("customer_id") == "cust-005"]
+        org_a_cust = [
+            c
+            for c in _leakage_store.values()
+            if c.get("organization_id") == ORG_A and c.get("customer_id") == "cust-005"
+        ]
         # cust-005 exists in Org B but not Org A
         assert len(org_a_cust) == 0
 
@@ -425,8 +434,7 @@ class TestLeakagePagination:
         """First page returns correct subset."""
         from app.api.v1.pagination import paginate
 
-        all_cases = [c for c in _leakage_store.values()
-                     if c.get("organization_id") == ORG_A]
+        all_cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         result = paginate(all_cases[:3], total=len(all_cases), page=1, page_size=3)
 
         assert result["total"] == 5
@@ -437,8 +445,7 @@ class TestLeakagePagination:
         """Second page returns remaining items."""
         from app.api.v1.pagination import paginate
 
-        all_cases = [c for c in _leakage_store.values()
-                     if c.get("organization_id") == ORG_A]
+        all_cases = [c for c in _leakage_store.values() if c.get("organization_id") == ORG_A]
         result = paginate(all_cases[3:5], total=len(all_cases), page=2, page_size=3)
 
         assert len(result["items"]) == 2

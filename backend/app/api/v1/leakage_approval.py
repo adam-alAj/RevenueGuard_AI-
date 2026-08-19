@@ -79,17 +79,13 @@ class CloseRequest(BaseModel):
 class SnoozeRequest(BaseModel):
     """Request body for snoozing a case."""
 
-    snoozed_until: str = Field(
-        description="ISO 8601 datetime until which to snooze"
-    )
+    snoozed_until: str = Field(description="ISO 8601 datetime until which to snooze")
 
 
 class RequestEvidenceRequest(BaseModel):
     """Request body for requesting more evidence."""
 
-    reason: str = Field(
-        default="", description="Reason for requesting additional evidence"
-    )
+    reason: str = Field(default="", description="Reason for requesting additional evidence")
 
 
 class CaseResponse(BaseModel):

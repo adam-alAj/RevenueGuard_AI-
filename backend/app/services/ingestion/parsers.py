@@ -16,6 +16,7 @@ from typing import Any
 def normalize_column_name(name: str) -> str:
     """Normalize a column name to lowercase snake_case."""
     import re
+
     name = name.strip().lower()
     name = re.sub(r"[^a-z0-9]+", "_", name)
     name = name.strip("_")
@@ -121,7 +122,9 @@ def read_excel(file_content: bytes) -> list[dict[str, Any]]:
     if headers is None:
         return []
 
-    normalized_headers = [normalize_column_name(str(h)) if h else f"col_{i}" for i, h in enumerate(headers)]
+    normalized_headers = [
+        normalize_column_name(str(h)) if h else f"col_{i}" for i, h in enumerate(headers)
+    ]
     rows = []
     for row in rows_iter:
         row_dict = {}

@@ -111,21 +111,23 @@ def _seed_search_data() -> None:
     }
 
     # Leakage cases
-    set_leakage_store({
-        "case-001": {
-            "case_id": "case-001",
-            "case_number": "RL-000001",
-            "leakage_type": "missing_invoice",
-            "status": "detected",
-            "severity": "critical",
-            "customer_id": "cust-001",
-            "potential_leakage": "12000.00",
-            "confidence": "0.95",
-            "description": "Missing invoice for Acme SaaS license",
-            "organization_id": ORG_ID,
-            "created_at": "2025-06-01T00:00:00Z",
-        },
-    })
+    set_leakage_store(
+        {
+            "case-001": {
+                "case_id": "case-001",
+                "case_number": "RL-000001",
+                "leakage_type": "missing_invoice",
+                "status": "detected",
+                "severity": "critical",
+                "customer_id": "cust-001",
+                "potential_leakage": "12000.00",
+                "confidence": "0.95",
+                "description": "Missing invoice for Acme SaaS license",
+                "organization_id": ORG_ID,
+                "created_at": "2025-06-01T00:00:00Z",
+            },
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -154,11 +156,23 @@ class TestSearchCustomers:
             name = c.get("name", "").lower()
             email = (c.get("email") or "").lower()
             if query_lower in name:
-                results.append({"entity_type": "customer", "entity_id": c["id"],
-                                "title": c["name"], "matched_field": "name"})
+                results.append(
+                    {
+                        "entity_type": "customer",
+                        "entity_id": c["id"],
+                        "title": c["name"],
+                        "matched_field": "name",
+                    }
+                )
             elif query_lower in email:
-                results.append({"entity_type": "customer", "entity_id": c["id"],
-                                "title": c["name"], "matched_field": "email"})
+                results.append(
+                    {
+                        "entity_type": "customer",
+                        "entity_id": c["id"],
+                        "title": c["name"],
+                        "matched_field": "email",
+                    }
+                )
 
         return results
 
@@ -214,8 +228,14 @@ class TestSearchContracts:
             if query_lower in name:
                 cust = _customer_store.get(ct.get("customer_id"))
                 cust_name = cust["name"] if cust else None
-                results.append({"entity_type": "contract", "entity_id": ct["id"],
-                                "title": ct["name"], "subtitle": cust_name})
+                results.append(
+                    {
+                        "entity_type": "contract",
+                        "entity_id": ct["id"],
+                        "title": ct["name"],
+                        "subtitle": cust_name,
+                    }
+                )
         return results
 
     def test_search_contract_by_name(self) -> None:
@@ -255,8 +275,13 @@ class TestSearchInvoices:
                 continue
             inv_num = inv.get("invoice_number", "").lower()
             if query_lower in inv_num:
-                results.append({"entity_type": "invoice", "entity_id": inv["id"],
-                                "title": inv["invoice_number"]})
+                results.append(
+                    {
+                        "entity_type": "invoice",
+                        "entity_id": inv["id"],
+                        "title": inv["invoice_number"],
+                    }
+                )
         return results
 
     def test_search_invoice_by_number(self) -> None:
@@ -297,11 +322,23 @@ class TestSearchCases:
             case_num = case.get("case_number", "").lower()
             desc = (case.get("description") or "").lower()
             if query_lower in case_num:
-                results.append({"entity_type": "case", "entity_id": case.get("case_id"),
-                                "title": case["case_number"], "matched_field": "case_number"})
+                results.append(
+                    {
+                        "entity_type": "case",
+                        "entity_id": case.get("case_id"),
+                        "title": case["case_number"],
+                        "matched_field": "case_number",
+                    }
+                )
             elif query_lower in desc:
-                results.append({"entity_type": "case", "entity_id": case.get("case_id"),
-                                "title": case["case_number"], "matched_field": "description"})
+                results.append(
+                    {
+                        "entity_type": "case",
+                        "entity_id": case.get("case_id"),
+                        "title": case["case_number"],
+                        "matched_field": "description",
+                    }
+                )
         return results
 
     def test_search_case_by_number(self) -> None:
@@ -362,7 +399,10 @@ class TestCrossEntitySearch:
         for case in _leakage_store.values():
             if case.get("organization_id") != ORG_ID:
                 continue
-            if query_lower in case.get("case_number", "").lower() or query_lower in (case.get("description") or "").lower():
+            if (
+                query_lower in case.get("case_number", "").lower()
+                or query_lower in (case.get("description") or "").lower()
+            ):
                 results.append({"entity_type": "case", "title": case["case_number"]})
 
         return results

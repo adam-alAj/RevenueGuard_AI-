@@ -345,6 +345,7 @@ class TestGate1Enforcement:
             potential_leakage=Decimal("2000"),
         )
         from app.services.recovery.action_drafter import _case_status_store
+
         assert _case_status_store["case-001"] == "action_pending"
 
 
@@ -426,6 +427,7 @@ class TestGate2Enforcement:
         drafter.execute_draft(draft.draft_id, "org-001", "user-001")
 
         from app.services.recovery.action_drafter import _case_status_store
+
         assert _case_status_store["case-001"] == "action_completed"
 
     def test_draft_approve_rejects_already_approved(self) -> None:

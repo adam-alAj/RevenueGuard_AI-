@@ -54,19 +54,21 @@ class PricingMismatchRule(BaseRule):
                     # Match by description (exact or close)
                     if il_desc and cl_desc and il_desc == cl_desc and il_price != cl_price:
                         difference = cl_price - il_price
-                        findings.append(LeakageFinding(
-                            leakage_type=self.leakage_type,
-                            description=(
-                                f"Line '{il.get('description', 'Unknown')}': "
-                                f"contract price ${cl_price:.2f} != "
-                                f"invoice price ${il_price:.2f}"
-                            ),
-                            expected_amount=cl_price,
-                            actual_amount=il_price,
-                            potential_leakage=abs(difference),
-                            customer_id=contract.get("customer_id"),
-                            contract_id=contract["id"],
-                            invoice_id=il.get("invoice_id"),
-                        ))
+                        findings.append(
+                            LeakageFinding(
+                                leakage_type=self.leakage_type,
+                                description=(
+                                    f"Line '{il.get('description', 'Unknown')}': "
+                                    f"contract price ${cl_price:.2f} != "
+                                    f"invoice price ${il_price:.2f}"
+                                ),
+                                expected_amount=cl_price,
+                                actual_amount=il_price,
+                                potential_leakage=abs(difference),
+                                customer_id=contract.get("customer_id"),
+                                contract_id=contract["id"],
+                                invoice_id=il.get("invoice_id"),
+                            )
+                        )
 
         return findings

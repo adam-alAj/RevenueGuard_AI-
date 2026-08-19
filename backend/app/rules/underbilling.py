@@ -64,18 +64,20 @@ class UnderbillingRule(BaseRule):
             if pct_diff < pct_threshold:
                 continue
 
-            findings.append(LeakageFinding(
-                leakage_type=self.leakage_type,
-                description=(
-                    f"Contract '{contract.get('name', 'Unknown')}': "
-                    f"expected ${expected:.2f}, invoiced ${actual:.2f}, "
-                    f"difference ${difference:.2f} ({pct_diff:.1f}%)"
-                ),
-                expected_amount=expected,
-                actual_amount=actual,
-                potential_leakage=difference,
-                customer_id=contract.get("customer_id"),
-                contract_id=contract["id"],
-            ))
+            findings.append(
+                LeakageFinding(
+                    leakage_type=self.leakage_type,
+                    description=(
+                        f"Contract '{contract.get('name', 'Unknown')}': "
+                        f"expected ${expected:.2f}, invoiced ${actual:.2f}, "
+                        f"difference ${difference:.2f} ({pct_diff:.1f}%)"
+                    ),
+                    expected_amount=expected,
+                    actual_amount=actual,
+                    potential_leakage=difference,
+                    customer_id=contract.get("customer_id"),
+                    contract_id=contract["id"],
+                )
+            )
 
         return findings

@@ -34,9 +34,18 @@ class TestAllStatuses:
     def test_expected_statuses_present(self) -> None:
         """All expected status names are present."""
         expected = {
-            "detected", "investigating", "pending_review", "approved",
-            "rejected", "action_pending", "action_completed", "verified",
-            "recovered", "false_positive", "legitimate_exception", "closed",
+            "detected",
+            "investigating",
+            "pending_review",
+            "approved",
+            "rejected",
+            "action_pending",
+            "action_completed",
+            "verified",
+            "recovered",
+            "false_positive",
+            "legitimate_exception",
+            "closed",
         }
         assert expected == ALL_STATUSES
 

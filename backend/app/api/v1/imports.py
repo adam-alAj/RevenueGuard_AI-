@@ -24,10 +24,19 @@ from app.services.ingestion.importer import run_import
 
 router = APIRouter(prefix="/imports", tags=["imports"])
 
-VALID_ENTITIES = {"customer", "contract", "contract_line", "project", "invoice", "invoice_line", "payment"}
+VALID_ENTITIES = {
+    "customer",
+    "contract",
+    "contract_line",
+    "project",
+    "invoice",
+    "invoice_line",
+    "payment",
+}
 
 
 # --- Response Models ---
+
 
 class ImportJobResponse(BaseModel):
     id: uuid.UUID
@@ -58,6 +67,7 @@ class ImportErrorsResponse(BaseModel):
 
 
 # --- Endpoints ---
+
 
 @router.post(
     "",
@@ -102,6 +112,7 @@ async def create_import(
     mapping = None
     if column_mapping:
         import json
+
         try:
             mapping = json.loads(column_mapping)
         except json.JSONDecodeError:
@@ -177,7 +188,7 @@ async def get_import_errors(
 
     errors_data = (job.errors or {}).get("rows", [])
     total = len(errors_data)
-    paginated = errors_data[offset:offset + limit]
+    paginated = errors_data[offset : offset + limit]
 
     return ImportErrorsResponse(
         job_id=job.id,

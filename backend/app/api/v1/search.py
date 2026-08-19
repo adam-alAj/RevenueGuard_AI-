@@ -76,21 +76,25 @@ async def search(
             name = c.get("name", "").lower()
             email = (c.get("email") or "").lower()
             if query_lower in name:
-                results.append(SearchResult(
-                    entity_type="customer",
-                    entity_id=c["id"],
-                    title=c["name"],
-                    subtitle=c.get("email"),
-                    matched_field="name",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="customer",
+                        entity_id=c["id"],
+                        title=c["name"],
+                        subtitle=c.get("email"),
+                        matched_field="name",
+                    )
+                )
             elif query_lower in email:
-                results.append(SearchResult(
-                    entity_type="customer",
-                    entity_id=c["id"],
-                    title=c["name"],
-                    subtitle=c.get("email"),
-                    matched_field="email",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="customer",
+                        entity_id=c["id"],
+                        title=c["name"],
+                        subtitle=c.get("email"),
+                        matched_field="email",
+                    )
+                )
 
     # Search contracts
     if not entity_type or entity_type == "contract":
@@ -102,13 +106,15 @@ async def search(
                 # Find customer name
                 cust = _customer_store.get(ct.get("customer_id"))
                 cust_name = cust["name"] if cust else None
-                results.append(SearchResult(
-                    entity_type="contract",
-                    entity_id=ct["id"],
-                    title=ct["name"],
-                    subtitle=cust_name,
-                    matched_field="name",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="contract",
+                        entity_id=ct["id"],
+                        title=ct["name"],
+                        subtitle=cust_name,
+                        matched_field="name",
+                    )
+                )
 
     # Search invoices
     if not entity_type or entity_type == "invoice":
@@ -117,13 +123,15 @@ async def search(
                 continue
             inv_num = inv.get("invoice_number", "").lower()
             if query_lower in inv_num:
-                results.append(SearchResult(
-                    entity_type="invoice",
-                    entity_id=inv["id"],
-                    title=inv["invoice_number"],
-                    subtitle=f"${inv.get('total', '0')}",
-                    matched_field="invoice_number",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="invoice",
+                        entity_id=inv["id"],
+                        title=inv["invoice_number"],
+                        subtitle=f"${inv.get('total', '0')}",
+                        matched_field="invoice_number",
+                    )
+                )
 
     # Search cases
     if not entity_type or entity_type == "case":
@@ -133,21 +141,25 @@ async def search(
             case_num = case.get("case_number", "").lower()
             desc = (case.get("description") or "").lower()
             if query_lower in case_num:
-                results.append(SearchResult(
-                    entity_type="case",
-                    entity_id=case.get("case_id", ""),
-                    title=case["case_number"],
-                    subtitle=case.get("leakage_type"),
-                    matched_field="case_number",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="case",
+                        entity_id=case.get("case_id", ""),
+                        title=case["case_number"],
+                        subtitle=case.get("leakage_type"),
+                        matched_field="case_number",
+                    )
+                )
             elif query_lower in desc:
-                results.append(SearchResult(
-                    entity_type="case",
-                    entity_id=case.get("case_id", ""),
-                    title=case["case_number"],
-                    subtitle=case.get("leakage_type"),
-                    matched_field="description",
-                ))
+                results.append(
+                    SearchResult(
+                        entity_type="case",
+                        entity_id=case.get("case_id", ""),
+                        title=case["case_number"],
+                        subtitle=case.get("leakage_type"),
+                        matched_field="description",
+                    )
+                )
 
     # Sort by relevance (exact match > contains)
     results.sort(key=lambda r: (query_lower not in r.title.lower(), r.title))

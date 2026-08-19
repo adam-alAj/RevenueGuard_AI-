@@ -32,10 +32,20 @@ def canonicalize_name(name: str) -> str:
     s = s.lower().strip()
     # Remove common business suffixes
     suffixes = [
-        r"\binc\.?\b", r"\bllc\.?\b", r"\bltd\.?\b", r"\bcorp\.?\b",
-        r"\bcorporation\b", r"\bincorporated\b", r"\bcompany\b", r"\bco\.?\b",
-        r"\bgroup\b", r"\binternational\b", r"\bglobal\b", r"\bsolutions\b",
-        r"\benterprises\b", r"\bholdings\b",
+        r"\binc\.?\b",
+        r"\bllc\.?\b",
+        r"\bltd\.?\b",
+        r"\bcorp\.?\b",
+        r"\bcorporation\b",
+        r"\bincorporated\b",
+        r"\bcompany\b",
+        r"\bco\.?\b",
+        r"\bgroup\b",
+        r"\binternational\b",
+        r"\bglobal\b",
+        r"\bsolutions\b",
+        r"\benterprises\b",
+        r"\bholdings\b",
     ]
     for suffix in suffixes:
         s = re.sub(suffix, "", s)
@@ -90,11 +100,22 @@ def canonicalize_address(address: str) -> str:
     s = address.lower().strip()
     # Expand abbreviations
     abbrevs = {
-        r"\bst\b": "street", r"\bave\b": "avenue", r"\bblvd\b": "boulevard",
-        r"\brd\b": "road", r"\bdr\b": "drive", r"\bln\b": "lane",
-        r"\bct\b": "court", r"\bpl\b": "place", r"\bwy\b": "way",
-        r"\bste\b": "suite", r"\bfl\b": "floor", r"\brm\b": "room",
-        r"\bn\b": "north", r"\bs\b": "south", r"\be\b": "east", r"\bw\b": "west",
+        r"\bst\b": "street",
+        r"\bave\b": "avenue",
+        r"\bblvd\b": "boulevard",
+        r"\brd\b": "road",
+        r"\bdr\b": "drive",
+        r"\bln\b": "lane",
+        r"\bct\b": "court",
+        r"\bpl\b": "place",
+        r"\bwy\b": "way",
+        r"\bste\b": "suite",
+        r"\bfl\b": "floor",
+        r"\brm\b": "room",
+        r"\bn\b": "north",
+        r"\bs\b": "south",
+        r"\be\b": "east",
+        r"\bw\b": "west",
     }
     for pattern, replacement in abbrevs.items():
         s = re.sub(pattern, replacement, s)

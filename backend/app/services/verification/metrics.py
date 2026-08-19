@@ -49,8 +49,13 @@ class OrgMetrics:
 
 # Case statuses considered "open" (not resolved)
 OPEN_STATUSES = {
-    "detected", "investigating", "pending_review", "approved",
-    "action_pending", "action_completed", "verified",
+    "detected",
+    "investigating",
+    "pending_review",
+    "approved",
+    "action_pending",
+    "action_completed",
+    "verified",
 }
 
 # Case statuses considered "recovered"
@@ -101,8 +106,14 @@ def compute_org_metrics(
         total_potential += case.potential_leakage
 
         # Sum confirmed leakage (cases that went through investigation)
-        if case.status in ("approved", "action_pending", "action_completed",
-                           "verified", "recovered", "closed"):
+        if case.status in (
+            "approved",
+            "action_pending",
+            "action_completed",
+            "verified",
+            "recovered",
+            "closed",
+        ):
             total_confirmed += case.potential_leakage
 
         # Sum recovered revenue

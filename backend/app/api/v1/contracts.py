@@ -94,7 +94,9 @@ async def list_contracts(
     start = pagination.offset
     page_items = contracts[start : start + pagination.page_size]
 
-    return ContractListResponse(**paginate(page_items, total, pagination.page, pagination.page_size))
+    return ContractListResponse(
+        **paginate(page_items, total, pagination.page, pagination.page_size)
+    )
 
 
 @router.get("/{contract_id}", response_model=ContractResponse)

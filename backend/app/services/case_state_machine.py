@@ -79,13 +79,11 @@ def validate_transition(current_status: str, target_status: str) -> None:
     """
     if current_status not in ALL_STATUSES:
         raise ValueError(
-            f"Unknown current status: '{current_status}'. "
-            f"Valid statuses: {sorted(ALL_STATUSES)}"
+            f"Unknown current status: '{current_status}'. Valid statuses: {sorted(ALL_STATUSES)}"
         )
     if target_status not in ALL_STATUSES:
         raise ValueError(
-            f"Unknown target status: '{target_status}'. "
-            f"Valid statuses: {sorted(ALL_STATUSES)}"
+            f"Unknown target status: '{target_status}'. Valid statuses: {sorted(ALL_STATUSES)}"
         )
 
     allowed = TRANSITION_TABLE.get(current_status, set())
@@ -107,8 +105,7 @@ def get_allowed_transitions(current_status: str) -> set[str]:
     """
     if current_status not in ALL_STATUSES:
         raise ValueError(
-            f"Unknown status: '{current_status}'. "
-            f"Valid statuses: {sorted(ALL_STATUSES)}"
+            f"Unknown status: '{current_status}'. Valid statuses: {sorted(ALL_STATUSES)}"
         )
     return set(TRANSITION_TABLE.get(current_status, set()))
 

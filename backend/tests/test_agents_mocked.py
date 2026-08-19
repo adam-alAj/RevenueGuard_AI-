@@ -112,7 +112,9 @@ class TestInvestigationResultSchema:
                 classification="maybe",  # not in enum
                 confidence=0.5,
                 explanation="Test",
-                evidence_refs=[{"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}],
+                evidence_refs=[
+                    {"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}
+                ],
             )
 
     def test_requires_evidence_refs(self) -> None:
@@ -132,7 +134,9 @@ class TestInvestigationResultSchema:
                 classification=InvestigationClassification.confirmed,
                 confidence=1.5,  # out of bounds
                 explanation="Test",
-                evidence_refs=[{"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}],
+                evidence_refs=[
+                    {"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}
+                ],
             )
 
     def test_all_classifications_valid(self) -> None:
@@ -142,7 +146,9 @@ class TestInvestigationResultSchema:
                 classification=cls,
                 confidence=0.5,
                 explanation=f"Testing {cls.value}",
-                evidence_refs=[{"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}],
+                evidence_refs=[
+                    {"evidence_id": "ev-001", "evidence_type": "contract", "relevance": "test"}
+                ],
             )
             assert result.classification == cls
 
@@ -248,7 +254,11 @@ class TestParseInvestigationResult:
             "confidence": 0.9,
             "explanation": "Clear billing discrepancy found.",
             "evidence_refs": [
-                {"evidence_id": "ev-001", "evidence_type": "invoice", "relevance": "Shows underbilling"}
+                {
+                    "evidence_id": "ev-001",
+                    "evidence_type": "invoice",
+                    "relevance": "Shows underbilling",
+                }
             ],
         }
         result = parse_investigation_result(json.dumps(data))
@@ -261,7 +271,11 @@ class TestParseInvestigationResult:
             "confidence": 0.85,
             "explanation": "Contract amendment shows pricing was intentionally reduced.",
             "evidence_refs": [
-                {"evidence_id": "ev-010", "evidence_type": "contract_amendment", "relevance": "Shows price reduction"}
+                {
+                    "evidence_id": "ev-010",
+                    "evidence_type": "contract_amendment",
+                    "relevance": "Shows price reduction",
+                }
             ],
             "false_positive_reason": "Contract was amended on 2026-01-15 to reduce pricing.",
         }
@@ -276,7 +290,11 @@ class TestParseInvestigationResult:
             "confidence": 0.95,
             "explanation": "Credit note explains the payment discrepancy.",
             "evidence_refs": [
-                {"evidence_id": "ev-020", "evidence_type": "credit_note", "relevance": "Covers the gap amount"}
+                {
+                    "evidence_id": "ev-020",
+                    "evidence_type": "credit_note",
+                    "relevance": "Covers the gap amount",
+                }
             ],
             "legitimate_exception_reason": "Credit note CN-2026-001 for $500 was issued for overpayment.",
         }
@@ -291,7 +309,11 @@ class TestParseInvestigationResult:
             "confidence": 0.3,
             "explanation": "Insufficient data to determine if this is actual leakage.",
             "evidence_refs": [
-                {"evidence_id": "ev-030", "evidence_type": "contract", "relevance": "Partial information only"}
+                {
+                    "evidence_id": "ev-030",
+                    "evidence_type": "contract",
+                    "relevance": "Partial information only",
+                }
             ],
         }
         result = parse_investigation_result(json.dumps(data))
@@ -347,9 +369,21 @@ class TestFalsePositiveScenario:
                 "Evidence: ev-001 (contract amendment), ev-002 (original contract), ev-003 (invoice)."
             ),
             "evidence_refs": [
-                {"evidence_id": "ev-001", "evidence_type": "contract_amendment", "relevance": "Shows rate reduction from $1,000 to $800"},
-                {"evidence_id": "ev-002", "evidence_type": "contract", "relevance": "Original contract at $1,000/month"},
-                {"evidence_id": "ev-003", "evidence_type": "invoice", "relevance": "Invoice correctly reflects $800"},
+                {
+                    "evidence_id": "ev-001",
+                    "evidence_type": "contract_amendment",
+                    "relevance": "Shows rate reduction from $1,000 to $800",
+                },
+                {
+                    "evidence_id": "ev-002",
+                    "evidence_type": "contract",
+                    "relevance": "Original contract at $1,000/month",
+                },
+                {
+                    "evidence_id": "ev-003",
+                    "evidence_type": "invoice",
+                    "relevance": "Invoice correctly reflects $800",
+                },
             ],
             "legitimate_exception_reason": "Contract was amended to reduce pricing — invoiced amount matches amended rate.",
         }
@@ -391,7 +425,11 @@ class TestSparseDataScenario:
                 "but no invoice or payment records. Cannot verify if billing occurred."
             ),
             "evidence_refs": [
-                {"evidence_id": "ev-050", "evidence_type": "contract", "relevance": "Only partial data available"}
+                {
+                    "evidence_id": "ev-050",
+                    "evidence_type": "contract",
+                    "relevance": "Only partial data available",
+                }
             ],
         }
 

@@ -111,7 +111,8 @@ async def list_leakage_inbox(
 
     if min_amount is not None:
         cases = [
-            c for c in cases
+            c
+            for c in cases
             if c.get("potential_leakage") is not None
             and float(c["potential_leakage"]) >= min_amount
         ]
@@ -119,7 +120,8 @@ async def list_leakage_inbox(
 
     if max_amount is not None:
         cases = [
-            c for c in cases
+            c
+            for c in cases
             if c.get("potential_leakage") is not None
             and float(c["potential_leakage"]) <= max_amount
         ]
@@ -127,32 +129,26 @@ async def list_leakage_inbox(
 
     if min_confidence is not None:
         cases = [
-            c for c in cases
-            if c.get("confidence") is not None
-            and float(c["confidence"]) >= min_confidence
+            c
+            for c in cases
+            if c.get("confidence") is not None and float(c["confidence"]) >= min_confidence
         ]
         filters_applied["min_confidence"] = min_confidence
 
     if max_confidence is not None:
         cases = [
-            c for c in cases
-            if c.get("confidence") is not None
-            and float(c["confidence"]) <= max_confidence
+            c
+            for c in cases
+            if c.get("confidence") is not None and float(c["confidence"]) <= max_confidence
         ]
         filters_applied["max_confidence"] = max_confidence
 
     if date_from:
-        cases = [
-            c for c in cases
-            if c.get("created_at") and c["created_at"] >= date_from
-        ]
+        cases = [c for c in cases if c.get("created_at") and c["created_at"] >= date_from]
         filters_applied["date_from"] = date_from
 
     if date_to:
-        cases = [
-            c for c in cases
-            if c.get("created_at") and c["created_at"] <= date_to
-        ]
+        cases = [c for c in cases if c.get("created_at") and c["created_at"] <= date_to]
         filters_applied["date_to"] = date_to
 
     if assigned_to:
@@ -162,7 +158,8 @@ async def list_leakage_inbox(
     if search:
         search_lower = search.lower()
         cases = [
-            c for c in cases
+            c
+            for c in cases
             if search_lower in c.get("case_number", "").lower()
             or search_lower in (c.get("description") or "").lower()
         ]

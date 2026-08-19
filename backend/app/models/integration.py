@@ -26,9 +26,7 @@ class Integration(UUIDMixin, TenantMixin, TimestampMixin, Base):
     provider: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
     config: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    last_sync_at: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), nullable=True
-    )
+    last_sync_at: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
 
 
 class DataSource(UUIDMixin, TenantMixin, TimestampMixin, Base):

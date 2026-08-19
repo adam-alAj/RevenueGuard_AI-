@@ -19,6 +19,7 @@ from app.api.v1.customers import (
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _clear_customers() -> None:
     """Clear the in-memory customer store between tests."""
     _customer_store.clear()
@@ -50,6 +51,7 @@ class TestCustomerSchemas:
         """CustomerCreate requires name (only required field)."""
         import pydantic
         import pytest
+
         with pytest.raises(pydantic.ValidationError) as exc_info:
             CustomerCreate()  # type: ignore[call-arg]
         errors = {e["loc"][-1] for e in exc_info.value.errors()}

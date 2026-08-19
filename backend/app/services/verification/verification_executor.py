@@ -179,9 +179,7 @@ class VerificationExecutor:
         # For other action types, simplified verification
         return self._check_other_action(case)
 
-    def _check_invoice_recovery(
-        self, case: CaseRecord, today: date
-    ) -> VerificationResult:
+    def _check_invoice_recovery(self, case: CaseRecord, today: date) -> VerificationResult:
         """Check for invoice recovery for create_invoice_draft actions."""
         # Look for matching invoices
         matching_invoices = self._find_matching_invoices(case)
@@ -237,8 +235,7 @@ class VerificationExecutor:
                 matched_invoice_id=best_invoice.invoice_id,
                 recovered_amount=Decimal("0"),
                 message=(
-                    f"Invoice {best_invoice.invoice_id} found but not yet paid. "
-                    f"Awaiting payment."
+                    f"Invoice {best_invoice.invoice_id} found but not yet paid. Awaiting payment."
                 ),
             )
 

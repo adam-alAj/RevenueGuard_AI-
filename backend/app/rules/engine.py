@@ -53,94 +53,102 @@ async def _load_context(
         today = date.today()
 
     # Load projects
-    result = await db.execute(
-        select(Project).where(Project.organization_id == org_id)
-    )
+    result = await db.execute(select(Project).where(Project.organization_id == org_id))
     projects = [
         {
-            "id": p.id, "name": p.name, "status": p.status,
-            "customer_id": p.customer_id, "contract_id": p.contract_id,
-            "is_billable": p.is_billable, "end_date": p.end_date,
+            "id": p.id,
+            "name": p.name,
+            "status": p.status,
+            "customer_id": p.customer_id,
+            "contract_id": p.contract_id,
+            "is_billable": p.is_billable,
+            "end_date": p.end_date,
             "start_date": p.start_date,
         }
         for p in result.scalars().all()
     ]
 
     # Load contracts
-    result = await db.execute(
-        select(Contract).where(Contract.organization_id == org_id)
-    )
+    result = await db.execute(select(Contract).where(Contract.organization_id == org_id))
     contracts = [
         {
-            "id": c.id, "name": c.name, "customer_id": c.customer_id,
-            "start_date": c.start_date, "end_date": c.end_date,
-            "expiration_date": c.expiration_date, "total_value": c.total_value,
+            "id": c.id,
+            "name": c.name,
+            "customer_id": c.customer_id,
+            "start_date": c.start_date,
+            "end_date": c.end_date,
+            "expiration_date": c.expiration_date,
+            "total_value": c.total_value,
             "billing_frequency": c.billing_frequency,
         }
         for c in result.scalars().all()
     ]
 
     # Load contract lines
-    result = await db.execute(
-        select(ContractLine).where(ContractLine.organization_id == org_id)
-    )
+    result = await db.execute(select(ContractLine).where(ContractLine.organization_id == org_id))
     contract_lines = [
         {
-            "id": cl.id, "contract_id": cl.contract_id,
-            "description": cl.description, "quantity": cl.quantity,
-            "unit_price": cl.unit_price, "total": cl.total,
+            "id": cl.id,
+            "contract_id": cl.contract_id,
+            "description": cl.description,
+            "quantity": cl.quantity,
+            "unit_price": cl.unit_price,
+            "total": cl.total,
         }
         for cl in result.scalars().all()
     ]
 
     # Load invoices
-    result = await db.execute(
-        select(Invoice).where(Invoice.organization_id == org_id)
-    )
+    result = await db.execute(select(Invoice).where(Invoice.organization_id == org_id))
     invoices = [
         {
-            "id": inv.id, "invoice_number": inv.invoice_number,
-            "customer_id": inv.customer_id, "contract_id": inv.contract_id,
-            "project_id": inv.project_id, "total": inv.total,
+            "id": inv.id,
+            "invoice_number": inv.invoice_number,
+            "customer_id": inv.customer_id,
+            "contract_id": inv.contract_id,
+            "project_id": inv.project_id,
+            "total": inv.total,
             "outstanding_balance": inv.outstanding_balance,
-            "due_date": inv.due_date, "issued_date": inv.issued_date,
+            "due_date": inv.due_date,
+            "issued_date": inv.issued_date,
         }
         for inv in result.scalars().all()
     ]
 
     # Load invoice lines
-    result = await db.execute(
-        select(InvoiceLine).where(InvoiceLine.organization_id == org_id)
-    )
+    result = await db.execute(select(InvoiceLine).where(InvoiceLine.organization_id == org_id))
     invoice_lines = [
         {
-            "id": il.id, "invoice_id": il.invoice_id,
-            "description": il.description, "quantity": il.quantity,
-            "unit_price": il.unit_price, "total": il.total,
+            "id": il.id,
+            "invoice_id": il.invoice_id,
+            "description": il.description,
+            "quantity": il.quantity,
+            "unit_price": il.unit_price,
+            "total": il.total,
         }
         for il in result.scalars().all()
     ]
 
     # Load payments
-    result = await db.execute(
-        select(Payment).where(Payment.organization_id == org_id)
-    )
+    result = await db.execute(select(Payment).where(Payment.organization_id == org_id))
     payments = [
         {
-            "id": pay.id, "customer_id": pay.customer_id,
-            "amount": pay.amount, "payment_date": pay.payment_date,
+            "id": pay.id,
+            "customer_id": pay.customer_id,
+            "amount": pay.amount,
+            "payment_date": pay.payment_date,
         }
         for pay in result.scalars().all()
     ]
 
     # Load credit notes
-    result = await db.execute(
-        select(CreditNote).where(CreditNote.organization_id == org_id)
-    )
+    result = await db.execute(select(CreditNote).where(CreditNote.organization_id == org_id))
     credit_notes = [
         {
-            "id": cn.id, "invoice_id": cn.invoice_id,
-            "amount": cn.amount, "customer_id": cn.customer_id,
+            "id": cn.id,
+            "invoice_id": cn.invoice_id,
+            "amount": cn.amount,
+            "customer_id": cn.customer_id,
         }
         for cn in result.scalars().all()
     ]

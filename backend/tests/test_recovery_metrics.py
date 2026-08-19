@@ -195,18 +195,24 @@ class TestCriticalCases:
         """Only critical-severity cases are counted."""
         cases = [
             CaseMetricsInput(
-                case_id="c1", organization_id="org-001",
-                status="detected", severity="critical",
+                case_id="c1",
+                organization_id="org-001",
+                status="detected",
+                severity="critical",
                 potential_leakage=Decimal("10000"),
             ),
             CaseMetricsInput(
-                case_id="c2", organization_id="org-001",
-                status="detected", severity="high",
+                case_id="c2",
+                organization_id="org-001",
+                status="detected",
+                severity="high",
                 potential_leakage=Decimal("5000"),
             ),
             CaseMetricsInput(
-                case_id="c3", organization_id="org-001",
-                status="detected", severity="critical",
+                case_id="c3",
+                organization_id="org-001",
+                status="detected",
+                severity="critical",
                 potential_leakage=Decimal("8000"),
             ),
         ]
@@ -219,12 +225,21 @@ class TestOpenCases:
 
     def test_open_case_statuses(self) -> None:
         """All non-closed statuses count as open."""
-        open_statuses = ["detected", "investigating", "pending_review",
-                        "approved", "action_pending", "action_completed", "verified"]
+        open_statuses = [
+            "detected",
+            "investigating",
+            "pending_review",
+            "approved",
+            "action_pending",
+            "action_completed",
+            "verified",
+        ]
         cases = [
             CaseMetricsInput(
-                case_id=f"c{i}", organization_id="org-001",
-                status=status, potential_leakage=Decimal("1000"),
+                case_id=f"c{i}",
+                organization_id="org-001",
+                status=status,
+                potential_leakage=Decimal("1000"),
             )
             for i, status in enumerate(open_statuses)
         ]
@@ -233,11 +248,19 @@ class TestOpenCases:
 
     def test_closed_not_counted(self) -> None:
         """Closed/recovered/false_positive/legitimate_exception not counted as open."""
-        closed_statuses = ["closed", "recovered", "false_positive", "legitimate_exception", "rejected"]
+        closed_statuses = [
+            "closed",
+            "recovered",
+            "false_positive",
+            "legitimate_exception",
+            "rejected",
+        ]
         cases = [
             CaseMetricsInput(
-                case_id=f"c{i}", organization_id="org-001",
-                status=status, potential_leakage=Decimal("1000"),
+                case_id=f"c{i}",
+                organization_id="org-001",
+                status=status,
+                potential_leakage=Decimal("1000"),
             )
             for i, status in enumerate(closed_statuses)
         ]
@@ -252,8 +275,10 @@ class TestSerialization:
         """OrgMetrics serializes correctly."""
         cases = [
             CaseMetricsInput(
-                case_id="c1", organization_id="org-001",
-                status="recovered", potential_leakage=Decimal("10000"),
+                case_id="c1",
+                organization_id="org-001",
+                status="recovered",
+                potential_leakage=Decimal("10000"),
                 recovered_amount=Decimal("10000"),
             ),
         ]

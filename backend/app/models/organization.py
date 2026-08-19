@@ -28,9 +28,7 @@ class User(UUIDMixin, TenantMixin, TimestampMixin, Base):
     """A user within an organization."""
 
     __tablename__ = "users"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "email", name="uq_users_org_email"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "email", name="uq_users_org_email"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -57,9 +55,7 @@ class Role(UUIDMixin, TenantMixin, TimestampMixin, Base):
     """A named role within an organization (e.g. Owner, Admin, Finance Manager)."""
 
     __tablename__ = "roles"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "name", name="uq_roles_org_name"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "name", name="uq_roles_org_name"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

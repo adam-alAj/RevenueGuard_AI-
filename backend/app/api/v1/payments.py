@@ -69,7 +69,9 @@ async def list_payments(
     start = pagination.offset
     page_items = payments[start : start + pagination.page_size]
 
-    return PaymentListResponse(**paginate(page_items, total, pagination.page, pagination.page_size))
+    return PaymentListResponse(
+        **paginate(page_items, total, pagination.page, pagination.page_size)
+    )
 
 
 @router.get("/{payment_id}", response_model=PaymentResponse)

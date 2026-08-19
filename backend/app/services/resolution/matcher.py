@@ -171,13 +171,15 @@ def find_matches_for_entity(
 
         score, method, details = compute_similarity(source_fields, entity)
         if score > 0:
-            candidates.append(MatchCandidate(
-                source_entity_id=source_id,
-                match_entity_id=entity_id,
-                similarity_score=score,
-                match_method=method,
-                comparison_details=details,
-            ))
+            candidates.append(
+                MatchCandidate(
+                    source_entity_id=source_id,
+                    match_entity_id=entity_id,
+                    similarity_score=score,
+                    match_method=method,
+                    comparison_details=details,
+                )
+            )
 
     # Sort by score descending
     candidates.sort(key=lambda c: c.similarity_score, reverse=True)

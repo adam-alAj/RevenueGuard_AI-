@@ -488,4 +488,5 @@ class TestEdgeCases:
 def time() -> float:
     """Get current timestamp."""
     import time as _time
+
     return _time.time()
