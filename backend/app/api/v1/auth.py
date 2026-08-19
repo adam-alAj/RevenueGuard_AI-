@@ -18,6 +18,11 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.rate_limit import (
+    rate_limit_login,
+    rate_limit_password_reset,
+    rate_limit_register,
+)
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -72,7 +77,11 @@ class PasswordResetConfirm(BaseModel):
 # --- Endpoints ---
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-async def register(req: RegisterRequest, db: Annotated[AsyncSession, Depends(get_db)]) -> TokenResponse:
+async def register(
+    req: RegisterRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    _rate: None = Depends(rate_limit_register),
+) -> TokenResponse:
     """Register a new organization with the first user as Owner."""
     # Check slug uniqueness
     existing = await db.execute(
@@ -134,7 +143,11 @@ async def register(req: RegisterRequest, db: Annotated[AsyncSession, Depends(get
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(req: LoginRequest, db: Annotated[AsyncSession, Depends(get_db)]) -> TokenResponse:
+async def login(
+    req: LoginRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    _rate: None = Depends(rate_limit_login),
+) -> TokenResponse:
     """Authenticate with email/password, return access + refresh tokens."""
     result = await db.execute(select(User).where(User.email == req.email))
     user = result.scalar_one_or_none()
@@ -268,6 +281,7 @@ async def logout(req: RefreshRequest) -> None:
 async def password_reset_request(
     req: PasswordResetRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
+    _rate: None = Depends(rate_limit_password_reset),
 ) -> dict[str, str]:
     """Request a password reset — generates a reset token (stub for MVP).
 
