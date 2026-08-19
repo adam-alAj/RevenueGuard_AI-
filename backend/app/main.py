@@ -37,3 +37,46 @@ app = FastAPI(
 async def health_check() -> dict[str, str]:
     """Health check endpoint — returns 200 OK with status."""
     return {"status": "ok"}
+
+
+# --- Register API routers ---
+from app.api.v1.agents import router as agents_router
+from app.api.v1.auth import router as auth_router
+from app.api.v1.contracts import router as contracts_router
+from app.api.v1.customers import router as customers_router
+from app.api.v1.customers_health import router as customers_health_router
+from app.api.v1.entity_resolution import router as entity_resolution_router
+from app.api.v1.imports import router as imports_router
+from app.api.v1.invoices import router as invoices_router
+from app.api.v1.leakage import router as leakage_router
+from app.api.v1.leakage_approval import router as leakage_approval_router
+from app.api.v1.leakage_inbox import router as leakage_inbox_router
+from app.api.v1.payments import router as payments_router
+from app.api.v1.recovery import router as recovery_router
+from app.api.v1.rules import router as rules_router
+from app.api.v1.search import router as search_router
+from app.api.v1.users import router as users_router
+from app.api.v1.verification import router as verification_router
+
+API_PREFIX = "/api/v1"
+
+for r in (
+    auth_router,
+    users_router,
+    agents_router,
+    imports_router,
+    entity_resolution_router,
+    rules_router,
+    leakage_router,
+    leakage_approval_router,
+    leakage_inbox_router,
+    recovery_router,
+    verification_router,
+    customers_router,
+    contracts_router,
+    invoices_router,
+    payments_router,
+    search_router,
+    customers_health_router,
+):
+    app.include_router(r, prefix=API_PREFIX)
