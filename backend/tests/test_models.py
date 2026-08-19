@@ -50,14 +50,15 @@ from app.models.rule import Rule
 # ---------------------------------------------------------------------------
 
 class TestLeakageTypeEnum:
-    def test_has_20_values(self) -> None:
-        assert len(LeakageType) == 20
+    def test_has_21_values(self) -> None:
+        assert len(LeakageType) == 21
 
     def test_all_expected_values_present(self) -> None:
         expected = {
             "missing_invoice", "underbilling", "pricing_mismatch",
             "quantity_mismatch", "discount_leakage", "contract_expiration",
             "subscription_renewal", "late_billing", "uncollected_invoice",
+            "overdue_invoice",
             "partial_payment", "reconciliation_failure", "incorrect_credit_note",
             "contract_invoice_conflict", "duplicate_discount",
             "recurring_billing_failure", "usage_billing", "minimum_commitment",

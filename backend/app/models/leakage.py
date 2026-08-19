@@ -64,6 +64,9 @@ class RevenueLeakageCase(UUIDMixin, TenantMixin, TimestampMixin, Base):
     rule_version_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("rule_versions.id"), nullable=True, index=True
     )
+    correlation_id: Mapped[str | None] = mapped_column(
+        String(100), nullable=True, index=True
+    )
     assigned_to: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), nullable=True, index=True
     )

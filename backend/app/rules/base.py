@@ -67,6 +67,7 @@ class LeakageFinding:
     invoice_id: uuid.UUID | None = None
     project_id: uuid.UUID | None = None
     severity: str | None = None
+    correlation_id: str | None = None
 
 
 class BaseRule(ABC):
