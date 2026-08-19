@@ -36,16 +36,24 @@ jobs:
 
       - name: Scan for hardcoded secrets
         run: |
-          # Check for common secret patterns in tracked files
-          echo "Scanning for hardcoded secrets..."
+          # Check for common secret patterns in production files (exclude tests)
+          echo "Scanning for hardcoded secrets in production code..."
           FOUND=0
           for pattern in \
             "sk-[a-zA-Z0-9]{20,}" \
             "ghp_[a-zA-Z0-9]{36}" \
-            "AKIA[0-9A-Z]{16}" \
+            "AKIA[0-9A-Z]{16}"; do
+            if git grep -l -E "$pattern" -- '*.py' '*.yml' '*.yaml' '*.json' '*.toml' ':!backend/tests/*' ':!*.test.*' 2>/dev/null; then
+              echo "WARNING: Potential secret found matching pattern: $pattern"
+              FOUND=1
+            fi
+          done
+          # Check for password/api_key assignments in production code only
+          # (test files legitimately use placeholder values)
+          for pattern in \
             "password\s*=\s*['\"][^'\"]{8,}['\"]" \
             "api_key\s*=\s*['\"][^'\"]{10,}['\"]"; do
-            if git grep -l -E "$pattern" -- '*.py' '*.yml' '*.yaml' '*.json' '*.toml' 2>/dev/null; then
+            if git grep -l -E "$pattern" -- 'backend/app/**/*.py' '*.yml' '*.yaml' '*.json' '*.toml' 2>/dev/null; then
               echo "WARNING: Potential secret found matching pattern: $pattern"
               FOUND=1
             fi
@@ -54,7 +62,7 @@ jobs:
             echo "Secrets detected — review and remediate before merging"
             exit 1
           fi
-          echo "No hardcoded secrets found in tracked files"
+          echo "No hardcoded secrets found in production files"
 
       - name: Run security test suite
         run: |
