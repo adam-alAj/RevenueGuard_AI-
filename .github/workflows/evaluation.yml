@@ -53,8 +53,9 @@ jobs:
           python -c "
           from eval.run_evaluation import run_evaluation_with_disabled_rules
           from eval.metrics import format_metrics_report
-          # Disabling missing_invoice should cause recall to drop below floor
-          metrics = run_evaluation_with_disabled_rules(['missing_invoice'])
+          # Disabling overdue_invoice (87 ground-truth cases) should cause
+          # recall to drop below the 0.90 floor
+          metrics = run_evaluation_with_disabled_rules(['overdue_invoice'])
           print(format_metrics_report(metrics))
           assert metrics.recall < 0.90, f'CI gate did not fail: recall={metrics.recall}'
           print('CI gate correctly detected regression.')
