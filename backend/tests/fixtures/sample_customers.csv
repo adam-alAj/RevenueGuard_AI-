@@ -1,0 +1,7 @@
+name,external_id,email,phone,address
+Acme Inc,CUST-001,contact@acme.com,+1-555-0101,123 Main St
+Globex Corporation,CUST-002,sales@globex.com,+1-555-0102,456 Oak Ave
+Initech,CUST-003,,+1-555-0103,789 Pine Rd
+Umbrella Corp,CUST-004,info@umbrella.com,,901 Elm Blvd
+Stark Industries,CUST-005,tony@stark.com,+1-555-0105,100 Stark Tower
+Wayne Enterprises,CUST-006,bat@wayne.com,+1-555-0106,Wayne Manor
