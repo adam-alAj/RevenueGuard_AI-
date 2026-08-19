@@ -10,6 +10,7 @@ Verifies:
 
 from __future__ import annotations
 
+import calendar
 from datetime import date, timedelta
 from decimal import Decimal
 
@@ -244,8 +245,10 @@ class TestGracePeriod:
 
     def test_no_invoice_past_grace_period(self) -> None:
         """No invoice past grace period → 'needs_follow_up'."""
-        now = time()
         today = date(2026, 8, 19)
+        # Compute timestamp relative to `today` so the grace-period calculation
+        # is stable regardless of when the test runs.
+        today_ts = calendar.timegm(today.timetuple())
 
         set_verification_data(
             cases={
@@ -256,7 +259,7 @@ class TestGracePeriod:
                     customer_id="cust-005",
                     potential_leakage=Decimal("8000.00"),
                     action_type="create_invoice_draft",
-                    action_completed_at=now - 2592000,  # 30 days ago
+                    action_completed_at=today_ts - 2592000,  # 30 days before today
                 ),
             },
             invoices={},
@@ -271,8 +274,10 @@ class TestGracePeriod:
 
     def test_grace_period_boundary(self) -> None:
         """Exactly at grace period boundary → needs_follow_up."""
-        now = time()
         today = date(2026, 8, 19)
+        # Compute timestamp relative to `today` so the grace-period calculation
+        # is stable regardless of when the test runs.
+        today_ts = calendar.timegm(today.timetuple())
 
         set_verification_data(
             cases={
@@ -283,7 +288,7 @@ class TestGracePeriod:
                     customer_id="cust-006",
                     potential_leakage=Decimal("1000.00"),
                     action_type="create_invoice_draft",
-                    action_completed_at=now - (30 * 86400),  # exactly 30 days ago
+                    action_completed_at=today_ts - (30 * 86400),  # exactly 30 days before today
                 ),
             },
             invoices={},

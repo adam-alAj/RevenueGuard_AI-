@@ -51,12 +51,19 @@ class Settings(BaseSettings):
     @field_validator("GEMINI_API_KEY", "JWT_SECRET", mode="before")
     @classmethod
     def _require_secret_outside_test(cls, v: str, info) -> str:
-        """Fail fast if a secret is missing outside test mode."""
+        """Fail fast if a secret is missing outside test mode.
+
+        We check the raw environment variable (via ``os.getenv``) rather than
+        the value ``v`` resolved by pydantic-settings, because ``v`` may
+        contain a value loaded from the ``.env`` file even when the caller
+        has removed the variable from ``os.environ`` (e.g. in tests).
+        """
+        field_name = info.field_name
+        raw_env = os.getenv(field_name)
         if os.getenv("APP_ENV") == "testing":
-            # In test mode, allow empty strings (tests don't need real secrets)
-            return v or "test-secret-placeholder"
-        if not v:
-            field_name = info.field_name
+            # In test mode, allow empty / missing vars (tests don't need real secrets)
+            return raw_env or "test-secret-placeholder"
+        if not raw_env:
             raise ValueError(
                 f"{field_name} must be set via environment variable. "
                 f"Refusing to start without it — this prevents running insecure."
