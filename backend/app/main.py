@@ -17,6 +17,8 @@ from fastapi import FastAPI
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.config import get_settings
 
 
@@ -31,6 +33,31 @@ app = FastAPI(
     title="RevenueGuard AI",
     lifespan=lifespan,
 )
+
+
+# ─── CORS (production-safe) ────────────────────────────────────────────────
+settings = get_settings()
+if settings.APP_ENV == "production":
+    # Production: strict CORS — only allowed origins
+    origins = [o.strip() for o in (settings.CORS_ORIGINS or "").split(",") if o.strip()]
+    if not origins:
+        origins = ["http://localhost"]  # Fallback for safety
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allow_headers=["*"],
+    )
+else:
+    # Development: permissive CORS for local frontend dev
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.get("/health", response_model=dict[str, str])
